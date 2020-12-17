@@ -1,0 +1,1 @@
+# WakaTimeFree

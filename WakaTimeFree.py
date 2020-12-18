@@ -15,7 +15,7 @@ def initialize_lists(data):
     #Käydään läpi kaikki päivät 
     for day in data["days"]:
             
-        #Päivämäärät  
+        #Päivämäärät 
         days.append(day["date"])
 
         #Kielet 
@@ -23,12 +23,12 @@ def initialize_lists(data):
                 if language["name"] not in languages:
                     languages[language["name"]] = []
 
-        #Editorit
+        #Editorit 
         for editor in day["editors"]:
             if editor["name"] not in editors:
                 editors[editor["name"]] = []
 
-        #Käyttöjärjestelmät
+        #Käyttöjärjestelmät 
         for operating_system in day["operating_systems"]:
             if operating_system["name"] not in operating_systems:
                 operating_systems[operating_system["name"]] = []
@@ -39,10 +39,35 @@ def fill_lists(data):
     #Käydään läpi kaikki päivät 
     for day in data["days"]:
 
-        #Käydään läpi kaikki kielet 
-        #for language in languages:
+        #Kuinka monen päivän tiedot on lisätty kieliin 
+        number_of_days = 0
 
-        print(day["languages"])
+        #Jos päivälle ei löydy tietoja kielistä 
+        if len(day["languages"]) == 0:
+
+            #Lisätään kaikkiin ohjelmointikieliin nolla sekuntia kyseiselle päivälle  
+            for language in languages:
+                languages[language].append(0.0)
+
+        #Jos päivälle löytyy tietoja kielistä 
+        else:
+
+            #Käydään läpi kaikki kielet 
+            for language in day["languages"]:
+
+                #Lisätään kieleen kyseisen päivän tiedot 
+                languages[language["name"]].append(language["total_seconds"])
+
+                #Tarkistetaan, monenko päivän tiedot on lisätty kieliin 
+                if len(languages[language["name"]]) > number_of_days:
+                    number_of_days = len(languages[language["name"]])
+
+        #Käydään läpi kaikki kielet 
+        for language in languages:
+
+            #Jos kielen tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle 
+            if len(languages[language]) < number_of_days:
+                languages[language].append(0.0)
 
 #Varsinainen ohjelma 
 if __name__ == "__main__":

@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+import matplotlib.pyplot as plt
 
 #Polku tiedostoon, johon käyttäjän tiedot on tallennettu 
 file_path = "wakatime.json"
@@ -141,6 +143,13 @@ def fill_operating_systems(data):
             if len(operating_systems[operating_system]) < number_of_days:
                 operating_systems[operating_system].append(0.0)
 
+#Muunnetaan päivämäärät oikeaan muotoon kuvaajien piirtämistä varten 
+def convert_dates(days):
+
+    for index, day in enumerate(days):
+        
+        days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10]))
+
 #Varsinainen ohjelma 
 if __name__ == "__main__":
     
@@ -157,3 +166,6 @@ if __name__ == "__main__":
         fill_languages(data)
         fill_editors(data)
         fill_operating_systems(data)
+
+        #Muunnetaan päivämäärät oikeaan muotoon 
+        convert_dates(days)

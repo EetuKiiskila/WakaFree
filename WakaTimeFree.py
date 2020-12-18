@@ -147,8 +147,18 @@ def fill_operating_systems(data):
 def convert_dates(days):
 
     for index, day in enumerate(days):
-        
-        days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10]))
+
+        days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10])).date()
+
+#Piirretään kielten kuvaajat 
+def draw_languages_graph(days, languages):
+
+    for language in languages:
+
+        plt.plot(days, languages[language], linestyle="solid", marker="", label=language)
+
+    plt.legend()
+    plt.show()
 
 #Varsinainen ohjelma 
 if __name__ == "__main__":

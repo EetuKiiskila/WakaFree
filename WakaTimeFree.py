@@ -33,8 +33,8 @@ def initialize_lists(data):
             if operating_system["name"] not in operating_systems:
                 operating_systems[operating_system["name"]] = []
 
-#Lisätään tiedot listoihin 
-def fill_lists(data):
+#Lisätään kielten tiedot hakurakenteeseen 
+def fill_languages(data):
 
     #Käydään läpi kaikki päivät 
     for day in data["days"]:
@@ -69,6 +69,78 @@ def fill_lists(data):
             if len(languages[language]) < number_of_days:
                 languages[language].append(0.0)
 
+#Lisätään editorien tiedot hakurakenteeseen 
+def fill_editors(data):
+
+    #Käydään läpi kaikki päivät 
+    for day in data["days"]:
+
+        #Kuinka monen päivän tiedot on lisätty editoreihin 
+        number_of_days = 0
+
+        #Jos päivälle ei löydy tietoja editoreista 
+        if len(day["editors"]) == 0:
+
+            #Lisätään kaikkiin editoreihin nolla sekuntia kyseiselle päivälle  
+            for editor in editors:
+                editors[editor].append(0.0)
+
+        #Jos päivälle löytyy tietoja editoreista 
+        else:
+
+            #Käydään läpi kaikki editorit 
+            for editor in day["editors"]:
+
+                #Lisätään editoriin kyseisen päivän tiedot 
+                editors[editor["name"]].append(editor["total_seconds"])
+
+                #Tarkistetaan, monenko päivän tiedot on lisätty editoreihin 
+                if len(editors[editor["name"]]) > number_of_days:
+                    number_of_days = len(editors[editor["name"]])
+
+        #Käydään läpi kaikki editorit 
+        for editor in editors:
+
+            #Jos editorin tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle 
+            if len(editors[editor]) < number_of_days:
+                editors[editor].append(0.0)
+
+#Lisätään käyttöjärjestelmien tiedot hakurakenteeseen 
+def fill_operating_systems(data):
+
+    #Käydään läpi kaikki päivät 
+    for day in data["days"]:
+
+        #Kuinka monen päivän tiedot on lisätty käyttöjärjestelmiin 
+        number_of_days = 0
+
+        #Jos päivälle ei löydy tietoja käyttöjärjestelmistä 
+        if len(day["operating_systems"]) == 0:
+
+            #Lisätään kaikkiin käyttöjärjestelmiin nolla sekuntia kyseiselle päivälle  
+            for operating_system in operating_systems:
+                operating_systems[operating_system].append(0.0)
+
+        #Jos päivälle löytyy tietoja käyttöjärjestelmistä 
+        else:
+
+            #Käydään läpi kaikki käyttöjärjestelmät 
+            for operating_system in day["operating_systems"]:
+
+                #Lisätään käyttöjärjestelmään kyseisen päivän tiedot 
+                operating_systems[operating_system["name"]].append(operating_system["total_seconds"])
+
+                #Tarkistetaan, monenko päivän tiedot on lisätty käyttöjärjestelmiin 
+                if len(operating_systems[operating_system["name"]]) > number_of_days:
+                    number_of_days = len(operating_systems[operating_system["name"]])
+
+        #Käydään läpi kaikki käyttöjärjestelmät 
+        for operating_system in operating_systems:
+
+            #Jos käyttöjärjestelmän tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle 
+            if len(operating_systems[operating_system]) < number_of_days:
+                operating_systems[operating_system].append(0.0)
+
 #Varsinainen ohjelma 
 if __name__ == "__main__":
     
@@ -81,5 +153,7 @@ if __name__ == "__main__":
         #Valmistellaan tietojen lukeminen 
         initialize_lists(data)
 
-        #Käydään läpi tiedot ja lisätään ne listoihin 
-        fill_lists(data)
+        #Käydään läpi kielet, editorit ja käyttöjärjestelmät 
+        fill_languages(data)
+        fill_editors(data)
+        fill_operating_systems(data)

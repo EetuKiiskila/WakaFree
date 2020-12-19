@@ -156,16 +156,16 @@ def seconds_to_hours(seconds):
     hours = seconds / 3600
     return hours
 
-#Piirretään kielten kuvaajat 
-def draw_languages_graph(days, languages):
+#Piirretään kuvaajat 
+def draw_graph(days, datasets):
 
-    #Käydään läpi kaikki kielet 
-    for language in languages:
+    #Käydään läpi kaikki tiedot  
+    for dataset in datasets:
 
-        #Muutetaan kielten ajat sekunneista tunneiksi 
-        languages[language] = [seconds_to_hours(total_seconds) for total_seconds in languages[language]]
+        #Muutetaan ajat sekunneista tunneiksi 
+        datasets[dataset] = [seconds_to_hours(total_seconds) for total_seconds in datasets[dataset]]
 
-        plt.plot(days, languages[language], linestyle="solid", marker="", label=language)
+        plt.plot(days, datasets[dataset], linestyle="solid", marker="", label=dataset)
 
     plt.legend()
     plt.show()
@@ -190,4 +190,6 @@ if __name__ == "__main__":
         #Muunnetaan päivämäärät oikeaan muotoon 
         convert_dates(days)
 
-        draw_languages_graph(days, languages)
+        draw_graph(days, languages)
+        draw_graph(days, editors)
+        draw_graph(days, operating_systems)

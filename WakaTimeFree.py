@@ -150,10 +150,20 @@ def convert_dates(days):
 
         days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10])).date()
 
+#Muunnetaan sekunnit tunneiksi 
+def seconds_to_hours(seconds):
+
+    hours = seconds / 3600
+    return hours
+
 #Piirretään kielten kuvaajat 
 def draw_languages_graph(days, languages):
 
+    #Käydään läpi kaikki kielet 
     for language in languages:
+
+        #Muutetaan kielten ajat sekunneista tunneiksi 
+        languages[language] = [seconds_to_hours(total_seconds) for total_seconds in languages[language]]
 
         plt.plot(days, languages[language], linestyle="solid", marker="", label=language)
 
@@ -179,3 +189,5 @@ if __name__ == "__main__":
 
         #Muunnetaan päivämäärät oikeaan muotoon 
         convert_dates(days)
+
+        draw_languages_graph(days, languages)

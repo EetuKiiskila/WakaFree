@@ -178,13 +178,24 @@ def draw_pie_chart(datasets):
     total_times = []
     labels = []
 
+    total_hours = 0
+
     #Käydään läpi kaikki tiedot 
     for dataset in datasets:
 
         #Lasketaan ajat yhteen ja muutetaan ne sekunneista tunneiksi 
         hours = seconds_to_hours(sum(datasets[dataset]))
+
+        #Lisätään aika kokonaisaikaan 
+        total_hours += hours
+
+        #Lisätään aika ja otsikko listoihin 
         total_times.append(hours)
         labels.append(dataset + " - {0} h {1} min".format(int(hours), int((hours - int(hours)) * 60)))
+
+    #Lisätään prosenttiosuudet selitteeseen 
+    for index, time in  enumerate(total_times):
+        labels[index] += " ({0:.2f} %)".format(total_times[index] / total_hours * 100)
 
     plt.pie(total_times)
     plt.legend(labels, bbox_to_anchor=(1.05, 1))

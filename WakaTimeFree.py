@@ -159,7 +159,7 @@ def seconds_to_hours(seconds):
 #Piirretään kuvaajat 
 def draw_graph(days, datasets):
 
-    #Käydään läpi kaikki tiedot  
+    #Käydään läpi kaikki tiedot 
     for dataset in datasets:
 
         #Muutetaan ajat sekunneista tunneiksi 
@@ -170,6 +170,24 @@ def draw_graph(days, datasets):
     plt.ylabel("t (h)")
 
     plt.legend()
+    plt.show()
+
+#Piirretään ympyrädiagrammi 
+def draw_pie_chart(datasets):
+
+    total_times = []
+    labels = []
+
+    #Käydään läpi kaikki tiedot 
+    for dataset in datasets:
+
+        #Lasketaan ajat yhteen ja muutetaan ne sekunneista tunneiksi 
+        hours = seconds_to_hours(sum(datasets[dataset]))
+        total_times.append(hours)
+        labels.append(dataset + " - {0} h {1} min".format(int(hours), int((hours - int(hours)) * 60)))
+
+    plt.pie(total_times)
+    plt.legend(labels, bbox_to_anchor=(1.05, 1))
     plt.show()
 
 #Varsinainen ohjelma 
@@ -192,6 +210,4 @@ if __name__ == "__main__":
         #Muunnetaan päivämäärät oikeaan muotoon 
         convert_dates(days)
 
-        draw_graph(days, languages)
-        draw_graph(days, editors)
-        draw_graph(days, operating_systems)
+        draw_pie_chart(languages)

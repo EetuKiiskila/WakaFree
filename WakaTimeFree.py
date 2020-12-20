@@ -167,6 +167,8 @@ def draw_graph(days, datasets):
 
         plt.plot(days, datasets[dataset], linestyle="solid", marker="", label=dataset)
 
+    plt.ylabel("t (h)")
+
     plt.legend()
     plt.show()
 

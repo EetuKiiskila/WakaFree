@@ -1,9 +1,7 @@
 import json
 from datetime import datetime
 import matplotlib.pyplot as plt
-
-#Polku tiedostoon, johon käyttäjän tiedot on tallennettu 
-file_path = "wakatime.json"
+import argparse
 
 #Listat tietojen keräämistä varten 
 days = []
@@ -203,22 +201,69 @@ def draw_pie_chart(datasets):
 
 #Varsinainen ohjelma 
 if __name__ == "__main__":
-    
-    #Avataan tiedosto 
-    with open(file_path, "r") as file:
 
-        #Kopioidaan tiedot muuttujaan 
-        data = json.load(file)
+    #Valmistellaan argumenttien lukeminen 
+    parser = argparse.ArgumentParser(description="You can use this program to show your statistics from WakaTime.")
+    parser.add_argument("file", metavar="FILE", help="path to file with statistics")
+    parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
+    parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
 
-        #Valmistellaan tietojen lukeminen 
-        initialize_lists(data)
+    #Luetaan argumentit 
+    args = parser.parse_args()
 
-        #Käydään läpi kielet, editorit ja käyttöjärjestelmät 
-        fill_languages(data)
-        fill_editors(data)
-        fill_operating_systems(data)
+    #Jos käyttäjä antaa tiedoston 
+    if args.file:
 
-        #Muunnetaan päivämäärät oikeaan muotoon 
-        convert_dates(days)
+        #Avataan tiedosto 
+        with open(args.file, "r") as file:
 
-        draw_pie_chart(languages)
+            #Kopioidaan tiedot muuttujaan 
+            data = json.load(file)
+
+            #Valmistellaan tietojen lukeminen 
+            initialize_lists(data)
+
+            #Muunnetaan päivämäärät oikeaan muotoon 
+            convert_dates(days)
+
+            #Jos käyttäjä antaa argumentin kuvaajien piirtämiseen 
+            if args.graphs:
+
+                #Kielten kuvaajat 
+                if "l" in args.graphs  or "L" in args.graphs:
+
+                    fill_languages(data)
+                    draw_graph(days, languages)
+
+                #Editorien kuvaajat 
+                if "e" in args.graphs or "E" in args.graphs:
+
+                    fill_editors(data)
+                    draw_graph(days, editors)
+
+                #Käyttöjärjestelmien kuvaajat 
+                if "o" in args.graphs or "O" in args.graphs:
+
+                    fill_operating_systems(data)
+                    draw_graph(days, operating_systems)
+
+            #Jos käyttäjä antaa argumentin kokonaisaikojen näyttämiseen 
+            if args.totals:
+
+                #Kielten kokonaisajat 
+                if "l" in args.totals or "L" in args.totals:
+
+                    fill_languages(data)
+                    draw_pie_chart(languages)
+
+                #Editorien kokonaisajat 
+                if "e" in args.totals or "E" in args.totals:
+
+                    fill_editors(data)
+                    draw_pie_chart(editors)
+
+                #Käyttöjärjestelmien kokonaisajat 
+                if "o" in args.totals or "O" in args.totals:
+
+                    fill_operating_systems(data)
+                    draw_pie_chart(operating_systems)

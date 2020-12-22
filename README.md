@@ -1,4 +1,4 @@
-# WakaTimeFree (v. 1)
+# WakaFree (v. 1)
 
 ## English
 
@@ -14,11 +14,11 @@ You can use this program to show your statistics from WakaTime. You can also sav
 
 Install the listed requirements. After that, clone the repository with the following command:
 
-`git clone https://github.com/EetuKiiskila/WakaTimeFree`
+`git clone https://github.com/EetuKiiskila/WakaFree`
 
 ### Usage
 
-`python WakaTimeFree.py [-h] [-g GRAPHS] [-t TOTALS] FILE`
+`python WakaFree.py [-h] [-g GRAPHS] [-t TOTALS] FILE`
 
 The arguments in the square brackets are optional. The arguments are explained below:
 - -h / --help: Prints information about the program. With this argument, the positional argument FILE is not required.
@@ -40,11 +40,11 @@ Voit käyttää tätä ohjelmaa WakaTimen keräämien tietojen näyttämiseen. V
 
 Asenna vaatimuksissa mainitut asiat. Sen jälkeen kopioi säilö tietokoneellesi seuraavalla komennolla:
 
-`git clone https://github.com/EetuKiiskila/WakaTimeFree`
+`git clone https://github.com/EetuKiiskila/WakaFree`
 
 ### Käyttö
 
-`python WakaTimeFree.py [-h] [-g GRAPHS] [-t TOTALS] FILE`
+`python WakaFree.py [-h] [-g GRAPHS] [-t TOTALS] FILE`
 
 Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty alapuolella:
 - -h / --help: Tulostaa tietoja ohjelmasta. Tämän argumentin kanssa argumentti FILE ei ole tarpeellinen.

@@ -9,6 +9,7 @@ You can use this program to show your statistics from WakaTime. You can also sav
 - Python: I have version 3.9.0 installed. I haven't tested any other versions.
 - Matplotlib: I have version 3.3.3 installed. I haven't tested any other versions.
 - NumPy: I have version 1.19.3 installed. Version 1.19.4 doesn't work. I haven't tested any other versions.
+- PyYAML: I have version 5.4.1 installed. I haven't tested any other versions.
 
 ### Installation
 
@@ -35,6 +36,7 @@ Voit käyttää tätä ohjelmaa WakaTimen keräämien tietojen näyttämiseen. V
 - Python: Minulla on asennettuna versio 3.9.0. En ole testannut muilla versioilla.
 - Matplotlib: Minulla on asennettuna versio 3.3.3. En ole testannut muilla versioilla.
 - NumPy: Minulla on asennettuna versio 1.19.3. Versiolla 1.19.4 ei toimi. En ole testannut muilla versioilla.
+- PyYAML. Minulla on asennettuna versio 5.4.1. En ole testannut muilla versioilla.
 
 ### Asennus
 

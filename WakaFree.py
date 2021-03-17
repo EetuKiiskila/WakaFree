@@ -212,6 +212,9 @@ def draw_pie_chart(datasets, colors_file_path):
     for index, time in  enumerate(total_times):
         labels[index] += " ({0:.2f} %)".format(total_times[index] / total_hours * 100)
 
+    #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
+    total_times, labels, colors = zip(*sorted(zip(total_times, labels, colors), reverse=True))
+
     plt.pie(total_times, colors=colors)
     plt.legend(labels, bbox_to_anchor=(1.05, 1))
     plt.show()

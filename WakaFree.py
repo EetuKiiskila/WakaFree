@@ -2,6 +2,7 @@ import json
 import yaml
 from datetime import datetime
 import matplotlib.pyplot as plt
+import plotly.express as px
 import argparse
 
 #Listat tietojen keräämistä varten
@@ -215,9 +216,10 @@ def draw_pie_chart(datasets, colors_file_path):
     #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
     total_times, labels, colors = zip(*sorted(zip(total_times, labels, colors), reverse=True))
 
-    plt.pie(total_times, colors=colors)
-    plt.legend(labels, bbox_to_anchor=(1.05, 1))
-    plt.show()
+    #Piirretään ympyrädiagrammi
+    fig = px.pie(names=labels, values=total_times, color_discrete_sequence=colors)
+    fig.update_traces(marker=dict(line=dict(color="black", width=0.5)), textinfo="none", hovertemplate=labels)
+    fig.show()
 
 #Varsinainen ohjelma
 if __name__ == "__main__":

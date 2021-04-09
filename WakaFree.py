@@ -5,20 +5,40 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 import argparse
 
-#Listat tietojen keräämistä varten
-days = []
-languages = {}
-editors = {}
-operating_systems = {}
+class Stats:
+    '''Yliluokka, joka sisältää päivämäärät sekä metodin näiden muuttamiseksi oikeaan muotoon.'''
+
+    days = []
+
+    @classmethod
+    def convert_dates(cls, days):
+        '''Muuntaa merkkijonoina olevat päivämäärät oikean tyyppisiksi.'''
+        for index, day in enumerate(days):
+            days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10])).date()
+
+class LanguagesStats(Stats):
+    '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
+    def __init__(self):
+        self.languages = {}
+
+class EditorsStats(Stats):
+    '''Aliluokka, joka sisältää tiedot eri editoreille.'''
+    def __init__(self):
+        self.editors = {}
+
+class OperatingSystemsStats(Stats):
+    '''Aliluokka, joka sisältää tiedot eri käyttöjärjestelmille.'''
+    def __init__(self):
+        self.operating_systems = {}
 
 #Listataan päivät, kielet, editorit ja käyttöjärjestelmät
-def initialize_lists(data):
+def initialize_lists(data, languages, editors, operating_systems):
 
     #Käydään läpi kaikki päivät
     for day in data["days"]:
             
         #Päivämäärät
-        days.append(day["date"])
+        Stats.days.append(day["date"])
 
         #Kielet
         for language in day["languages"]:
@@ -36,7 +56,7 @@ def initialize_lists(data):
                 operating_systems[operating_system["name"]] = []
 
 #Lisätään kielten tiedot hakurakenteeseen
-def fill_languages(data):
+def fill_languages(data, languages):
 
     #Käydään läpi kaikki päivät
     for day in data["days"]:
@@ -72,7 +92,7 @@ def fill_languages(data):
                 languages[language].append(0.0)
 
 #Lisätään editorien tiedot hakurakenteeseen
-def fill_editors(data):
+def fill_editors(data, editors):
 
     #Käydään läpi kaikki päivät
     for day in data["days"]:
@@ -108,7 +128,7 @@ def fill_editors(data):
                 editors[editor].append(0.0)
 
 #Lisätään käyttöjärjestelmien tiedot hakurakenteeseen
-def fill_operating_systems(data):
+def fill_operating_systems(data, operating_systems):
 
     #Käydään läpi kaikki päivät
     for day in data["days"]:
@@ -142,13 +162,6 @@ def fill_operating_systems(data):
             #Jos käyttöjärjestelmän tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle
             if len(operating_systems[operating_system]) < number_of_days:
                 operating_systems[operating_system].append(0.0)
-
-#Muunnetaan päivämäärät oikeaan muotoon kuvaajien piirtämistä varten
-def convert_dates(days):
-
-    for index, day in enumerate(days):
-
-        days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10])).date()
 
 #Muunnetaan sekunnit tunneiksi
 def seconds_to_hours(seconds):
@@ -239,14 +252,19 @@ if __name__ == "__main__":
         #Avataan tiedosto
         with open(args.file, "r") as file:
 
+            #Luodaan oliot tietoja varten
+            languages = LanguagesStats()
+            editors = EditorsStats()
+            operating_systems = OperatingSystemsStats()
+
             #Kopioidaan tiedot muuttujaan
             data = json.load(file)
 
             #Valmistellaan tietojen lukeminen
-            initialize_lists(data)
+            initialize_lists(data, languages.languages, editors.editors, operating_systems.operating_systems)
 
             #Muunnetaan päivämäärät oikeaan muotoon
-            convert_dates(days)
+            Stats.convert_dates(Stats.days)
 
             #Jos käyttäjä antaa argumentin kuvaajien piirtämiseen
             if args.graphs:
@@ -254,20 +272,20 @@ if __name__ == "__main__":
                 #Kielten kuvaajat
                 if "l" in args.graphs  or "L" in args.graphs:
 
-                    fill_languages(data)
-                    draw_graph(days, languages, "Colors/languages_colors.yml")
+                    fill_languages(data, languages.languages)
+                    draw_graph(Stats.days, languages.languages, "Colors/languages_colors.yml")
 
                 #Editorien kuvaajat
                 if "e" in args.graphs or "E" in args.graphs:
 
-                    fill_editors(data)
-                    draw_graph(days, editors, "Colors/editors_colors.yml")
+                    fill_editors(data, editors.editors)
+                    draw_graph(Stats.days, editors.editors, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kuvaajat
                 if "o" in args.graphs or "O" in args.graphs:
 
-                    fill_operating_systems(data)
-                    draw_graph(days, operating_systems, "Colors/operating_systems_colors.yml")
+                    fill_operating_systems(data, operating_systems.operating_systems)
+                    draw_graph(Stats.days, operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
 
             #Jos käyttäjä antaa argumentin kokonaisaikojen näyttämiseen
             if args.totals:
@@ -275,17 +293,17 @@ if __name__ == "__main__":
                 #Kielten kokonaisajat
                 if "l" in args.totals or "L" in args.totals:
 
-                    fill_languages(data)
-                    draw_pie_chart(languages, "Colors/languages_colors.yml")
+                    fill_languages(data, languages.languages)
+                    draw_pie_chart(languages.languages, "Colors/languages_colors.yml")
 
                 #Editorien kokonaisajat
                 if "e" in args.totals or "E" in args.totals:
 
-                    fill_editors(data)
-                    draw_pie_chart(editors, "Colors/editors_colors.yml")
+                    fill_editors(data, editors.editors)
+                    draw_pie_chart(editors.editors, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kokonaisajat
                 if "o" in args.totals or "O" in args.totals:
 
-                    fill_operating_systems(data)
-                    draw_pie_chart(operating_systems, "Colors/operating_systems_colors.yml")
+                    fill_operating_systems(data, operating_systems.operating_systems)
+                    draw_pie_chart(operating_systems.operating_systems, "Colors/operating_systems_colors.yml")

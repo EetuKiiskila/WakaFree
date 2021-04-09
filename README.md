@@ -1,4 +1,4 @@
-# WakaFree (v. 1.3.2)
+# WakaFree (v. 1.3.3)
 
 ## English
 

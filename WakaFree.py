@@ -6,7 +6,7 @@ import plotly.express as px
 import argparse
 
 class Stats:
-    '''Yliluokka, joka sisältää päivämäärät sekä metodin näiden muuttamiseksi oikeaan muotoon.'''
+    '''Yliluokka, joka sisältää päivämäärät sekä metodin näiden muuttamiseksi oikeaan muotoon ja metodin sekuntien muuttamiseksi tunneiksi.'''
 
     days = []
 
@@ -15,6 +15,12 @@ class Stats:
         '''Muuntaa merkkijonoina olevat päivämäärät oikean tyyppisiksi.'''
         for index, day in enumerate(days):
             days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10])).date()
+
+    @staticmethod
+    def seconds_to_hours(seconds):
+        '''Muuntaa parametrina annetut sekunnit tunneiksi.'''
+        hours = seconds / 3600
+        return hours
 
 class LanguagesStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
@@ -163,12 +169,6 @@ def fill_operating_systems(data, operating_systems):
             if len(operating_systems[operating_system]) < number_of_days:
                 operating_systems[operating_system].append(0.0)
 
-#Muunnetaan sekunnit tunneiksi
-def seconds_to_hours(seconds):
-
-    hours = seconds / 3600
-    return hours
-
 #Piirretään kuvaajat
 def draw_graph(days, datasets, colors_file_path):
 
@@ -180,7 +180,7 @@ def draw_graph(days, datasets, colors_file_path):
         for dataset in datasets:
 
             #Muutetaan ajat sekunneista tunneiksi
-            datasets[dataset] = [seconds_to_hours(total_seconds) for total_seconds in datasets[dataset]]
+            datasets[dataset] = [Stats.seconds_to_hours(total_seconds) for total_seconds in datasets[dataset]]
 
             try:
                 plt.plot(days, datasets[dataset], linestyle="solid", marker="", label=dataset, color=colors_data[dataset]["color"])
@@ -209,7 +209,7 @@ def draw_pie_chart(datasets, colors_file_path):
         for dataset in datasets:
 
             #Lasketaan ajat yhteen ja muutetaan ne sekunneista tunneiksi
-            hours = seconds_to_hours(sum(datasets[dataset]))
+            hours = Stats.seconds_to_hours(sum(datasets[dataset]))
 
             #Lisätään aika kokonaisaikaan
             total_hours += hours

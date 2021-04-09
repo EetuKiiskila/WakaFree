@@ -248,6 +248,8 @@ if __name__ == "__main__":
 
     #Luetaan argumentit
     args = parser.parse_args()
+    graphs = args.graphs if args.graphs else ""
+    totals = args.totals if args.totals else ""
 
     #Jos käyttäjä antaa tiedoston
     if args.file:
@@ -260,60 +262,57 @@ if __name__ == "__main__":
             editors = EditorsStats()
             operating_systems = OperatingSystemsStats()
 
-            #Kopioidaan tiedot muuttujaan
+            #Luetaan tiedot
             data = json.load(file)
-
-            #Mitä tietoja käyttäjä haluaa
-            stats_to_look_for = (args.graphs if args.graphs else "") + (args.totals if args.totals else "")
 
             #Valmistellaan tietojen lukeminen
             Stats.fetch_days_and_labels(
                 data,
-                languages=languages.languages if "l" in stats_to_look_for.lower() else None,
-                editors=editors.editors if "e" in stats_to_look_for.lower() else None,
-                operating_systems=operating_systems.operating_systems if "o" in stats_to_look_for.lower() else None)
+                languages=languages.languages if "l" in (graphs + totals).lower() else None,
+                editors=editors.editors if "e" in (graphs + totals).lower() else None,
+                operating_systems=operating_systems.operating_systems if "o" in (graphs + totals).lower() else None)
 
             #Muunnetaan päivämäärät oikeaan muotoon
             Stats.convert_dates()
 
-            #Jos käyttäjä antaa argumentin kuvaajien piirtämiseen
+            #Jos käyttäjä haluaa piirtää kuvaajat
             if args.graphs:
 
                 #Kielten kuvaajat
-                if "l" in args.graphs  or "L" in args.graphs:
+                if "l" in graphs.lower():
 
                     fill_languages(data, languages.languages)
                     draw_graph(Stats.days, languages.languages, "Colors/languages_colors.yml")
 
                 #Editorien kuvaajat
-                if "e" in args.graphs or "E" in args.graphs:
+                if "e" in graphs.lower():
 
                     fill_editors(data, editors.editors)
                     draw_graph(Stats.days, editors.editors, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kuvaajat
-                if "o" in args.graphs or "O" in args.graphs:
+                if "o" in graphs.lower():
 
                     fill_operating_systems(data, operating_systems.operating_systems)
                     draw_graph(Stats.days, operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
 
-            #Jos käyttäjä antaa argumentin kokonaisaikojen näyttämiseen
+            #Jos käyttäjä haluaa näyttää kokonaisajat
             if args.totals:
 
                 #Kielten kokonaisajat
-                if "l" in args.totals or "L" in args.totals:
+                if "l" in totals.lower():
 
                     fill_languages(data, languages.languages)
                     draw_pie_chart(languages.languages, "Colors/languages_colors.yml")
 
                 #Editorien kokonaisajat
-                if "e" in args.totals or "E" in args.totals:
+                if "e" in totals.lower():
 
                     fill_editors(data, editors.editors)
                     draw_pie_chart(editors.editors, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kokonaisajat
-                if "o" in args.totals or "O" in args.totals:
+                if "o" in totals.lower():
 
                     fill_operating_systems(data, operating_systems.operating_systems)
                     draw_pie_chart(operating_systems.operating_systems, "Colors/operating_systems_colors.yml")

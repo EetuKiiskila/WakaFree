@@ -54,123 +54,135 @@ class LanguagesStats(Stats):
     def __init__(self):
         self.languages = {}
 
+    def populate_stats(self, data):
+        '''Lisää kielten tiedot hakurakenteeseen.
+
+        Parametrit:
+         
+            data -- JSON-tiedostosta luetut tiedot.
+        '''
+        #Käydään läpi kaikki päivät
+        for day in data["days"]:
+
+            #Kuinka monen päivän tiedot on lisätty kieliin
+            number_of_days = 0
+
+            #Jos päivälle ei löydy tietoja kielistä
+            if len(day["languages"]) == 0:
+
+                #Lisätään kaikkiin ohjelmointikieliin nolla sekuntia kyseiselle päivälle
+                for language in self.languages:
+                    self.languages[language].append(0.0)
+
+            #Jos päivälle löytyy tietoja kielistä
+            else:
+
+                #Käydään läpi kaikki kielet
+                for language in day["languages"]:
+
+                    #Lisätään kieleen kyseisen päivän tiedot
+                    self.languages[language["name"]].append(language["total_seconds"])
+
+                    #Tarkistetaan, monenko päivän tiedot on lisätty kieliin
+                    if len(self.languages[language["name"]]) > number_of_days:
+                        number_of_days = len(self.languages[language["name"]])
+
+            #Käydään läpi kaikki kielet
+            for language in self.languages:
+
+                #Jos kielen tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle
+                if len(self.languages[language]) < number_of_days:
+                    self.languages[language].append(0.0)
+
 class EditorsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri editoreille.'''
     def __init__(self):
         self.editors = {}
+
+    def populate_stats(self, data):
+        '''Lisää editorien tiedot hakurakenteeseen.
+        
+        Parametrit:
+
+            data -- JSON-tiedostosta luetut tiedot.
+        '''
+        #Käydään läpi kaikki päivät
+        for day in data["days"]:
+
+            #Kuinka monen päivän tiedot on lisätty editoreihin
+            number_of_days = 0
+
+            #Jos päivälle ei löydy tietoja editoreista
+            if len(day["editors"]) == 0:
+
+                #Lisätään kaikkiin editoreihin nolla sekuntia kyseiselle päivälle
+                for editor in self.editors:
+                    self.editors[editor].append(0.0)
+
+            #Jos päivälle löytyy tietoja editoreista
+            else:
+
+                #Käydään läpi kaikki editorit
+                for editor in day["editors"]:
+
+                    #Lisätään editoriin kyseisen päivän tiedot
+                    self.editors[editor["name"]].append(editor["total_seconds"])
+
+                    #Tarkistetaan, monenko päivän tiedot on lisätty editoreihin
+                    if len(self.editors[editor["name"]]) > number_of_days:
+                        number_of_days = len(self.editors[editor["name"]])
+
+            #Käydään läpi kaikki editorit
+            for editor in self.editors:
+
+                #Jos editorin tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle
+                if len(self.editors[editor]) < number_of_days:
+                    self.editors[editor].append(0.0)
 
 class OperatingSystemsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri käyttöjärjestelmille.'''
     def __init__(self):
         self.operating_systems = {}
 
-#Lisätään kielten tiedot hakurakenteeseen
-def fill_languages(data, languages):
+    def populate_stats(self, data):
+        '''Lisää käyttöjärjestelmien tiedot hakurakenteeseen.
 
-    #Käydään läpi kaikki päivät
-    for day in data["days"]:
+        Parametrit:
 
-        #Kuinka monen päivän tiedot on lisätty kieliin
-        number_of_days = 0
+            data -- JSON-tiedostosta luetut tiedot.
+        '''
+        #Käydään läpi kaikki päivät
+        for day in data["days"]:
 
-        #Jos päivälle ei löydy tietoja kielistä
-        if len(day["languages"]) == 0:
+            #Kuinka monen päivän tiedot on lisätty käyttöjärjestelmiin
+            number_of_days = 0
 
-            #Lisätään kaikkiin ohjelmointikieliin nolla sekuntia kyseiselle päivälle
-            for language in languages:
-                languages[language].append(0.0)
+            #Jos päivälle ei löydy tietoja käyttöjärjestelmistä
+            if len(day["operating_systems"]) == 0:
 
-        #Jos päivälle löytyy tietoja kielistä
-        else:
+                #Lisätään kaikkiin käyttöjärjestelmiin nolla sekuntia kyseiselle päivälle 
+                for operating_system in self.operating_systems:
+                    self.operating_systems[operating_system].append(0.0)
 
-            #Käydään läpi kaikki kielet
-            for language in day["languages"]:
+            #Jos päivälle löytyy tietoja käyttöjärjestelmistä
+            else:
 
-                #Lisätään kieleen kyseisen päivän tiedot
-                languages[language["name"]].append(language["total_seconds"])
+                #Käydään läpi kaikki käyttöjärjestelmät
+                for operating_system in day["operating_systems"]:
 
-                #Tarkistetaan, monenko päivän tiedot on lisätty kieliin
-                if len(languages[language["name"]]) > number_of_days:
-                    number_of_days = len(languages[language["name"]])
+                    #Lisätään käyttöjärjestelmään kyseisen päivän tiedot
+                    self.operating_systems[operating_system["name"]].append(operating_system["total_seconds"])
 
-        #Käydään läpi kaikki kielet
-        for language in languages:
-
-            #Jos kielen tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle
-            if len(languages[language]) < number_of_days:
-                languages[language].append(0.0)
-
-#Lisätään editorien tiedot hakurakenteeseen
-def fill_editors(data, editors):
-
-    #Käydään läpi kaikki päivät
-    for day in data["days"]:
-
-        #Kuinka monen päivän tiedot on lisätty editoreihin
-        number_of_days = 0
-
-        #Jos päivälle ei löydy tietoja editoreista
-        if len(day["editors"]) == 0:
-
-            #Lisätään kaikkiin editoreihin nolla sekuntia kyseiselle päivälle
-            for editor in editors:
-                editors[editor].append(0.0)
-
-        #Jos päivälle löytyy tietoja editoreista
-        else:
-
-            #Käydään läpi kaikki editorit
-            for editor in day["editors"]:
-
-                #Lisätään editoriin kyseisen päivän tiedot
-                editors[editor["name"]].append(editor["total_seconds"])
-
-                #Tarkistetaan, monenko päivän tiedot on lisätty editoreihin
-                if len(editors[editor["name"]]) > number_of_days:
-                    number_of_days = len(editors[editor["name"]])
-
-        #Käydään läpi kaikki editorit
-        for editor in editors:
-
-            #Jos editorin tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle
-            if len(editors[editor]) < number_of_days:
-                editors[editor].append(0.0)
-
-#Lisätään käyttöjärjestelmien tiedot hakurakenteeseen
-def fill_operating_systems(data, operating_systems):
-
-    #Käydään läpi kaikki päivät
-    for day in data["days"]:
-
-        #Kuinka monen päivän tiedot on lisätty käyttöjärjestelmiin
-        number_of_days = 0
-
-        #Jos päivälle ei löydy tietoja käyttöjärjestelmistä
-        if len(day["operating_systems"]) == 0:
-
-            #Lisätään kaikkiin käyttöjärjestelmiin nolla sekuntia kyseiselle päivälle 
-            for operating_system in operating_systems:
-                operating_systems[operating_system].append(0.0)
-
-        #Jos päivälle löytyy tietoja käyttöjärjestelmistä
-        else:
+                    #Tarkistetaan, monenko päivän tiedot on lisätty käyttöjärjestelmiin
+                    if len(self.operating_systems[operating_system["name"]]) > number_of_days:
+                        number_of_days = len(self.operating_systems[operating_system["name"]])
 
             #Käydään läpi kaikki käyttöjärjestelmät
-            for operating_system in day["operating_systems"]:
+            for operating_system in self.operating_systems:
 
-                #Lisätään käyttöjärjestelmään kyseisen päivän tiedot
-                operating_systems[operating_system["name"]].append(operating_system["total_seconds"])
-
-                #Tarkistetaan, monenko päivän tiedot on lisätty käyttöjärjestelmiin
-                if len(operating_systems[operating_system["name"]]) > number_of_days:
-                    number_of_days = len(operating_systems[operating_system["name"]])
-
-        #Käydään läpi kaikki käyttöjärjestelmät
-        for operating_system in operating_systems:
-
-            #Jos käyttöjärjestelmän tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle
-            if len(operating_systems[operating_system]) < number_of_days:
-                operating_systems[operating_system].append(0.0)
+                #Jos käyttöjärjestelmän tiedoista puuttuu päivä, lisätään nolla sekuntia kyseiselle päivälle
+                if len(self.operating_systems[operating_system]) < number_of_days:
+                    self.operating_systems[operating_system].append(0.0)
 
 #Piirretään kuvaajat
 def draw_graph(days, datasets, colors_file_path):
@@ -275,25 +287,27 @@ if __name__ == "__main__":
             #Muunnetaan päivämäärät oikeaan muotoon
             Stats.convert_dates()
 
+            #Täytetään halutut hakurakenteet tiedoilla
+            if "l" in (graphs + totals).lower():
+                languages.populate_stats(data)
+            if "e" in (graphs + totals).lower():
+                editors.populate_stats(data)
+            if "o" in (graphs + totals).lower():
+                operating_systems.populate_stats(data)
+
             #Jos käyttäjä haluaa piirtää kuvaajat
             if args.graphs:
 
                 #Kielten kuvaajat
                 if "l" in graphs.lower():
-
-                    fill_languages(data, languages.languages)
                     draw_graph(Stats.days, languages.languages, "Colors/languages_colors.yml")
 
                 #Editorien kuvaajat
                 if "e" in graphs.lower():
-
-                    fill_editors(data, editors.editors)
                     draw_graph(Stats.days, editors.editors, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kuvaajat
                 if "o" in graphs.lower():
-
-                    fill_operating_systems(data, operating_systems.operating_systems)
                     draw_graph(Stats.days, operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
 
             #Jos käyttäjä haluaa näyttää kokonaisajat
@@ -301,18 +315,12 @@ if __name__ == "__main__":
 
                 #Kielten kokonaisajat
                 if "l" in totals.lower():
-
-                    fill_languages(data, languages.languages)
                     draw_pie_chart(languages.languages, "Colors/languages_colors.yml")
 
                 #Editorien kokonaisajat
                 if "e" in totals.lower():
-
-                    fill_editors(data, editors.editors)
                     draw_pie_chart(editors.editors, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kokonaisajat
                 if "o" in totals.lower():
-
-                    fill_operating_systems(data, operating_systems.operating_systems)
                     draw_pie_chart(operating_systems.operating_systems, "Colors/operating_systems_colors.yml")

@@ -36,7 +36,7 @@ Voit käyttää tätä ohjelmaa WakaTimen keräämien tietojen näyttämiseen. V
 ### Vaatimukset
 
 - Python: Minulla on asennettuna versio 3.9.0. En ole testannut muilla versioilla.
-- PyYAML. Minulla on asennettuna versio 5.4.1. En ole testannut muilla versioilla.
+- PyYAML: Minulla on asennettuna versio 5.4.1. En ole testannut muilla versioilla.
 - NumPy: Minulla on asennettuna versio 1.19.3. Versiolla 1.19.4 ei toimi. En ole testannut muilla versioilla.
 - Matplotlib: Minulla on asennettuna versio 3.3.3. En ole testannut muilla versioilla.
 - pandas: Minulla on asennettuna versio 1.2.3. En ole testannut muilla versioilla.

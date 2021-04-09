@@ -11,7 +11,7 @@ class Stats:
     days = []
 
     @classmethod
-    def convert_dates(cls, days):
+    def convert_dates(cls, days=days):
         '''Muuntaa merkkijonoina olevat päivämäärät oikean tyyppisiksi.'''
         for index, day in enumerate(days):
             days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10])).date()
@@ -21,6 +21,33 @@ class Stats:
         '''Muuntaa parametrina annetut sekunnit tunneiksi.'''
         hours = seconds / 3600
         return hours
+
+    @staticmethod
+    def fetch_days_and_labels(data, days=days, languages=None, editors=None, operating_systems=None):
+        '''Lisää päivät listaan ja avaimet haluttuihin hakurakenteisiin.'''
+        #Käydään läpi kaikki päivät
+        for day in data["days"]:
+            
+            #Päivämäärät
+            days.append(day["date"])
+
+            #Kielet
+            if languages is not None:
+                for language in day["languages"]:
+                    if language["name"] not in languages:
+                        languages[language["name"]] = []
+        
+            #Editorit
+            if editors is not None:
+                for editor in day["editors"]:
+                    if editor["name"] not in editors:
+                        editors[editor["name"]] = []
+
+            #Käyttöjärjestelmät
+            if operating_systems is not None:
+                for operating_system in day["operating_systems"]:
+                    if operating_system["name"] not in operating_systems:
+                        operating_systems[operating_system["name"]] = []
 
 class LanguagesStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
@@ -36,30 +63,6 @@ class OperatingSystemsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri käyttöjärjestelmille.'''
     def __init__(self):
         self.operating_systems = {}
-
-#Listataan päivät, kielet, editorit ja käyttöjärjestelmät
-def initialize_lists(data, languages, editors, operating_systems):
-
-    #Käydään läpi kaikki päivät
-    for day in data["days"]:
-            
-        #Päivämäärät
-        Stats.days.append(day["date"])
-
-        #Kielet
-        for language in day["languages"]:
-                if language["name"] not in languages:
-                    languages[language["name"]] = []
-
-        #Editorit
-        for editor in day["editors"]:
-            if editor["name"] not in editors:
-                editors[editor["name"]] = []
-
-        #Käyttöjärjestelmät
-        for operating_system in day["operating_systems"]:
-            if operating_system["name"] not in operating_systems:
-                operating_systems[operating_system["name"]] = []
 
 #Lisätään kielten tiedot hakurakenteeseen
 def fill_languages(data, languages):
@@ -260,11 +263,18 @@ if __name__ == "__main__":
             #Kopioidaan tiedot muuttujaan
             data = json.load(file)
 
+            #Mitä tietoja käyttäjä haluaa
+            stats_to_look_for = (args.graphs if args.graphs else "") + (args.totals if args.totals else "")
+
             #Valmistellaan tietojen lukeminen
-            initialize_lists(data, languages.languages, editors.editors, operating_systems.operating_systems)
+            Stats.fetch_days_and_labels(
+                data,
+                languages=languages.languages if "l" in stats_to_look_for.lower() else None,
+                editors=editors.editors if "e" in stats_to_look_for.lower() else None,
+                operating_systems=operating_systems.operating_systems if "o" in stats_to_look_for.lower() else None)
 
             #Muunnetaan päivämäärät oikeaan muotoon
-            Stats.convert_dates(Stats.days)
+            Stats.convert_dates()
 
             #Jos käyttäjä antaa argumentin kuvaajien piirtämiseen
             if args.graphs:

@@ -1,7 +1,7 @@
 import json
 import yaml
 from datetime import datetime
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 import plotly.express as px
 import argparse
 
@@ -179,17 +179,19 @@ def draw_graph(days, datasets, colors_file_path):
 
         colors_data = yaml.safe_load(colors_file)
 
+        fig = go.Figure()
+
         #Käydään läpi kaikki tiedot
         for dataset in datasets:
             try:
-                plt.plot(days, datasets[dataset], linestyle="solid", marker="", label=dataset, color=colors_data[dataset]["color"])
+                fig.add_trace(go.Scatter(x=days, y=datasets[dataset], mode="lines", name=dataset, marker=dict(color=colors_data[dataset]["color"])))
             except Exception:
-                plt.plot(days, datasets[dataset], linestyle="solid", marker="", label=dataset)
+                fig.add_trace(go.Scatter(x=days, y=datasets[dataset], mode="lines", name=dataset))
 
-    plt.ylabel("t (h)")
-
-    plt.legend()
-    plt.show()
+    fig.update_layout(yaxis_title="t (h)", plot_bgcolor="white")
+    fig.update_xaxes(showline=True, linewidth=1, linecolor="black", mirror=True)
+    fig.update_yaxes(showline=True, linewidth=1, linecolor="black", mirror=True)
+    fig.show()
 
 #Piirretään ympyrädiagrammi
 def draw_pie_chart(datasets, colors_file_path):

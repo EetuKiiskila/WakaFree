@@ -53,6 +53,8 @@ class LanguagesStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
     def __init__(self):
         self.languages = {}
+        self.keys = []
+        self.total_times = []
 
     def populate_stats(self, data):
         '''Lisää kielten tiedot hakurakenteeseen.
@@ -94,10 +96,32 @@ class LanguagesStats(Stats):
                 if len(self.languages[language]) < number_of_days:
                     self.languages[language].append(0.0)
 
+    def sort_stats_and_populate_keys(self):
+        '''Järjestää tiedot eniten käytetystä vähiten käytettyyn ja täyttää avaimet oikeassa järjestyksessä.'''
+        total_hours = 0
+
+        #Käydään läpi kielet
+        for language in self.languages:
+
+            #Lasketaan kielen päivittäiset ajat yhteen
+            hours = sum(self.languages[language])
+
+            #Lisätään aika kokonaisaikaan
+            total_hours += hours
+
+            #Lisätään kokonaisaika ja avain listoihin
+            self.total_times.append(hours)
+            self.keys.append(language)
+
+        #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
+        self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
+
 class EditorsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri editoreille.'''
     def __init__(self):
         self.editors = {}
+        self.keys = []
+        self.total_times = []
 
     def populate_stats(self, data):
         '''Lisää editorien tiedot hakurakenteeseen.
@@ -139,10 +163,32 @@ class EditorsStats(Stats):
                 if len(self.editors[editor]) < number_of_days:
                     self.editors[editor].append(0.0)
 
+    def sort_stats_and_populate_keys(self):
+        '''Järjestää tiedot eniten käytetystä vähiten käytettyyn ja täyttää avaimet oikeassa järjestyksessä.'''
+        total_hours = 0
+
+        #Käydään läpi editorit
+        for editor in self.editors:
+
+            #Lasketaan editorin päivittäiset ajat yhteen
+            hours = sum(self.editors[editor])
+
+            #Lisätään aika kokonaisaikaan
+            total_hours += hours
+
+            #Lisätään kokonaisaika ja avain listoihin
+            self.total_times.append(hours)
+            self.keys.append(editor)
+
+        #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
+        self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
+
 class OperatingSystemsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri käyttöjärjestelmille.'''
     def __init__(self):
         self.operating_systems = {}
+        self.keys = []
+        self.total_times = []
 
     def populate_stats(self, data):
         '''Lisää käyttöjärjestelmien tiedot hakurakenteeseen.
@@ -184,8 +230,28 @@ class OperatingSystemsStats(Stats):
                 if len(self.operating_systems[operating_system]) < number_of_days:
                     self.operating_systems[operating_system].append(0.0)
 
+    def sort_stats_and_populate_keys(self):
+        '''Järjestää tiedot eniten käytetystä vähiten käytettyyn ja täyttää avaimet oikeassa järjestyksessä.'''
+        total_hours = 0
+
+        #Käydään läpi käyttöjärjestelmät
+        for operating_system in self.operating_systems:
+
+            #Lasketaan käyttöjärjestelmän päivittäiset ajat yhteen
+            hours = sum(self.operating_systems[operating_system])
+
+            #Lisätään aika kokonaisaikaan
+            total_hours += hours
+
+            #Lisätään kokonaisaika ja avain listoihin
+            self.total_times.append(hours)
+            self.keys.append(operating_system)
+
+        #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
+        self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
+
 #Piirretään kuvaajat
-def draw_graph(days, datasets, colors_file_path):
+def draw_graph(days, keys, datasets, colors_file_path):
 
     with open(colors_file_path, "r") as colors_file:
 
@@ -194,11 +260,11 @@ def draw_graph(days, datasets, colors_file_path):
         fig = go.Figure()
 
         #Käydään läpi kaikki tiedot
-        for dataset in datasets:
+        for key in keys:
             try:
-                fig.add_trace(go.Scatter(x=days, y=datasets[dataset], mode="lines", name=dataset, marker=dict(color=colors_data[dataset]["color"])))
+                fig.add_trace(go.Scatter(x=days, y=datasets[key], mode="lines", name=key, marker=dict(color=colors_data[key]["color"])))
             except Exception:
-                fig.add_trace(go.Scatter(x=days, y=datasets[dataset], mode="lines", name=dataset))
+                fig.add_trace(go.Scatter(x=days, y=datasets[key], mode="lines", name=key))
 
     fig.update_layout(yaxis_title="t (h)", plot_bgcolor="white")
     fig.update_xaxes(showline=True, linewidth=1, linecolor="black", mirror=True)
@@ -206,9 +272,8 @@ def draw_graph(days, datasets, colors_file_path):
     fig.show()
 
 #Piirretään ympyrädiagrammi
-def draw_pie_chart(datasets, colors_file_path):
+def draw_pie_chart(keys, total_times, colors_file_path):
 
-    total_times = []
     labels = []
     colors = []
 
@@ -219,28 +284,23 @@ def draw_pie_chart(datasets, colors_file_path):
         colors_data = yaml.safe_load(colors_file)
 
         #Käydään läpi kaikki tiedot
-        for dataset in datasets:
+        for index, key in enumerate(keys):
 
-            #Lasketaan ajat yhteen ja muutetaan
-            hours = sum(datasets[dataset])
+            hours = total_times[index]
 
             #Lisätään aika kokonaisaikaan
             total_hours += hours
 
-            #Lisätään aika ja otsikko listoihin
-            total_times.append(hours)
-            labels.append(dataset + " - {0} h {1} min".format(int(hours), int((hours - int(hours)) * 60)))
+            #Lisätään otsikko listoihin
+            labels.append(key + " - {0} h {1} min".format(int(hours), int((hours - int(hours)) * 60)))
             try:
-                colors.append(colors_data[dataset]["color"])
+                colors.append(colors_data[key]["color"])
             except Exception:
                 colors.append(colors_data["Other"]["color"])
 
     #Lisätään prosenttiosuudet selitteeseen
     for index, time in  enumerate(total_times):
         labels[index] += " ({0:.2f} %)".format(total_times[index] / total_hours * 100)
-
-    #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
-    total_times, labels, colors = zip(*sorted(zip(total_times, labels, colors), reverse=True))
 
     #Piirretään ympyrädiagrammi
     fig = px.pie(names=labels, values=total_times, color_discrete_sequence=colors)
@@ -288,37 +348,40 @@ if __name__ == "__main__":
             #Haetaan halutut tiedot
             if "l" in (graphs + totals).lower():
                 languages.populate_stats(data)
+                languages.sort_stats_and_populate_keys()
             if "e" in (graphs + totals).lower():
                 editors.populate_stats(data)
+                editors.sort_stats_and_populate_keys()
             if "o" in (graphs + totals).lower():
                 operating_systems.populate_stats(data)
+                operating_systems.sort_stats_and_populate_keys()
 
             #Jos käyttäjä haluaa piirtää kuvaajat
             if args.graphs:
 
                 #Kielten kuvaajat
                 if "l" in graphs.lower():
-                    draw_graph(Stats.days, languages.languages, "Colors/languages_colors.yml")
+                    draw_graph(Stats.days, languages.keys, languages.languages, "Colors/languages_colors.yml")
 
                 #Editorien kuvaajat
                 if "e" in graphs.lower():
-                    draw_graph(Stats.days, editors.editors, "Colors/editors_colors.yml")
+                    draw_graph(Stats.days, editors.keys, editors.editors, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kuvaajat
                 if "o" in graphs.lower():
-                    draw_graph(Stats.days, operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
+                    draw_graph(Stats.days, operating_systems.keys, operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
 
             #Jos käyttäjä haluaa näyttää kokonaisajat
             if args.totals:
 
                 #Kielten kokonaisajat
                 if "l" in totals.lower():
-                    draw_pie_chart(languages.languages, "Colors/languages_colors.yml")
+                    draw_pie_chart(languages.keys, languages.total_times, "Colors/languages_colors.yml")
 
                 #Editorien kokonaisajat
                 if "e" in totals.lower():
-                    draw_pie_chart(editors.editors, "Colors/editors_colors.yml")
+                    draw_pie_chart(editors.keys, editors.total_times, "Colors/editors_colors.yml")
 
                 #Käyttöjärjestelmien kokonaisajat
                 if "o" in totals.lower():
-                    draw_pie_chart(operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
+                    draw_pie_chart(operating_systems.keys, operating_systems.total_times, "Colors/operating_systems_colors.yml")

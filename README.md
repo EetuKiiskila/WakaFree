@@ -1,5 +1,13 @@
 # WakaFree (v. 1.6)
 
+[English](#english)
+
+[Suomi](#suomi)
+
+![](https://i.imgur.com/a1OcuWY.png)
+
+![](https://i.imgur.com/PUW7z5A.png)
+
 ## English
 
 You can use this program to show your statistics from WakaTime. You can also save the figures drawn by the program. I do not encourage anyone to use this program. If you can afford it, you should consider supporting WakaTime.

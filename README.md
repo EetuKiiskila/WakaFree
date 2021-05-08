@@ -37,7 +37,7 @@ The arguments in the square brackets are optional. The arguments are explained b
 - -t / --totals: Shows total times. Use a string with l or L for programming languages, e or E for editors and o or O for operating systems.
 - FILE: The path for the file that contains the statistics from WakaTime. Can be downloaded from WakaTime by going to Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
-The program might not always manage to show the figures. This seems to be an issue with Plotly. In case this happens, simply run the program again.
+The program might not always manage to show the figures. This seems to be an issue with Plotly. In case this happens, simply run the program again. Having your default browser open might also help.
 
 ## Suomi
 
@@ -68,4 +68,4 @@ Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty a
 - -t / --totals: Näyttää kokonaisajat. Käytä merkkijonoa, jossa on l tai L ohjelmointikieliä varten, e tai E editoreja varten ja o tai O käyttöjärjestelmiä varten.
 - FILE: Polku tiedostoon, joka sisältää WakaTimen tilastot. Voidaan ladata WakaTimesta kohdasta Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
-Ohjelma ei välttämättä aina onnistu näyttämään kaavioita. Ongelma vaikuttaa liittyvän Plotlyyn. Tällaisissa tapauksissa suorita ohjelma vain uudestaan.
+Ohjelma ei välttämättä aina onnistu näyttämään kaavioita. Ongelma vaikuttaa liittyvän Plotlyyn. Tällaisissa tapauksissa suorita ohjelma vain uudestaan. Oletusselaimen avaaminen ennen ohjelman suorittamista voi myös auttaa.

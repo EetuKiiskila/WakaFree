@@ -311,7 +311,8 @@ def draw_pie_chart(keys, total_times, colors_file_path):
 if __name__ == "__main__":
 
     #Valmistellaan argumenttien lukeminen
-    parser = argparse.ArgumentParser(description="You can use this program to show your statistics from WakaTime.")
+    parser = argparse.ArgumentParser(description="You can use this program to show your statistics from WakaTime.",
+                                    usage="WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] FILE}")
     parser.add_argument("file", metavar="FILE", help="path to file with statistics")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
@@ -320,6 +321,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
+
+    #Jos käyttäjä ei antanut kumpaakaan valinnaista argumenttia
+    if graphs == "" and totals == "":
+        graphs = "leo"
+        totals = "leo"
 
     #Jos käyttäjä antaa tiedoston
     if args.file:
@@ -357,7 +363,7 @@ if __name__ == "__main__":
                 operating_systems.sort_stats_and_populate_keys()
 
             #Jos käyttäjä haluaa piirtää kuvaajat
-            if args.graphs:
+            if args.graphs or (not args.graphs and not args.totals):
 
                 #Kielten kuvaajat
                 if "l" in graphs.lower():
@@ -372,7 +378,7 @@ if __name__ == "__main__":
                     draw_graph(Stats.days, operating_systems.keys, operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
 
             #Jos käyttäjä haluaa näyttää kokonaisajat
-            if args.totals:
+            if args.totals or (not args.graphs and not args.totals):
 
                 #Kielten kokonaisajat
                 if "l" in totals.lower():

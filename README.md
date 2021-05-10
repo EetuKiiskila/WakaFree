@@ -29,7 +29,7 @@ Install the listed requirements. After that, clone the repository with the follo
 
 ### Usage
 
-`python WakaFree.py [-h] [-g GRAPHS] [-t TOTALS] FILE`
+`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] FILE}`
 
 The arguments in the square brackets are optional. The arguments are explained below:
 - -h / --help: Prints information about the program. With this argument, the positional argument FILE is not required.
@@ -37,7 +37,19 @@ The arguments in the square brackets are optional. The arguments are explained b
 - -t / --totals: Shows total times. Use a string with l or L for programming languages, e or E for editors and o or O for operating systems.
 - FILE: The path for the file that contains the statistics from WakaTime. Can be downloaded from WakaTime by going to Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
+If neither of the optional arguments is given with FILE, then everything will be drawn.
+
 The program might not always manage to show the figures. This seems to be an issue with Plotly. In case this happens, simply run the program again. Having your default browser open might also help.
+
+### Examples
+
+The following command draws all the charts based on the stats from the file *stats.json*:
+
+`python WakaFree.py stats.json`
+
+The following command does the same:
+
+`python WakaFree.py -g leo -t leo stats.json`
 
 ## Suomi
 
@@ -60,7 +72,7 @@ Asenna vaatimuksissa mainitut asiat. Sen jälkeen kopioi säilö tietokoneellesi
 
 ### Käyttö
 
-`python WakaFree.py [-h] [-g GRAPHS] [-t TOTALS] FILE`
+`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] FILE}`
 
 Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty alapuolella:
 - -h / --help: Tulostaa tietoja ohjelmasta. Tämän argumentin kanssa argumentti FILE ei ole tarpeellinen.
@@ -68,4 +80,16 @@ Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty a
 - -t / --totals: Näyttää kokonaisajat. Käytä merkkijonoa, jossa on l tai L ohjelmointikieliä varten, e tai E editoreja varten ja o tai O käyttöjärjestelmiä varten.
 - FILE: Polku tiedostoon, joka sisältää WakaTimen tilastot. Voidaan ladata WakaTimesta kohdasta Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
+Jos kumpaakaan valinnaista argumenttia ei anneta FILE:n kanssa, piirretään kaikki kuvaajat.
+
 Ohjelma ei välttämättä aina onnistu näyttämään kaavioita. Ongelma vaikuttaa liittyvän Plotlyyn. Tällaisissa tapauksissa suorita ohjelma vain uudestaan. Oletusselaimen avaaminen ennen ohjelman suorittamista voi myös auttaa.
+
+### Esimerkkejä
+
+Seuraava komento piirtää kaikki kuvaajat tiedoston *stats.json* sisältämistä tiedoista:
+
+`python WakaFree.py stats.json`
+
+Seuraava komento tekee saman:
+
+`python WakaFree.py -g leo -t leo stats.json`

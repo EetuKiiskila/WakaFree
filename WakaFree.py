@@ -27,6 +27,12 @@ class Stats:
         '''Lisää päivät listaan ja avaimet haluttuihin hakurakenteisiin.'''
         #Käydään läpi kaikki päivät
         for day in data["days"]:
+
+            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
+            if day["date"] < str(start_date):
+                continue
+            elif day["date"] > str(end_date):
+                continue
             
             #Päivämäärät
             days.append(day["date"])
@@ -71,6 +77,12 @@ class LanguagesStats(Stats):
         '''
         #Käydään läpi kaikki päivät
         for day in data["days"]:
+
+            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
+            if day["date"] < str(start_date):
+                continue
+            elif day["date"] > str(end_date):
+                continue
 
             #Kuinka monen päivän tiedot on lisätty kieliin
             number_of_days = 0
@@ -143,6 +155,12 @@ class EditorsStats(Stats):
         #Käydään läpi kaikki päivät
         for day in data["days"]:
 
+            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
+            if day["date"] < str(start_date):
+                continue
+            elif day["date"] > str(end_date):
+                continue
+
             #Kuinka monen päivän tiedot on lisätty editoreihin
             number_of_days = 0
 
@@ -213,6 +231,12 @@ class OperatingSystemsStats(Stats):
         '''
         #Käydään läpi kaikki päivät
         for day in data["days"]:
+
+            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
+            if day["date"] < str(start_date):
+                continue
+            elif day["date"] > str(end_date):
+                continue
 
             #Kuinka monen päivän tiedot on lisätty käyttöjärjestelmiin
             number_of_days = 0
@@ -331,19 +355,23 @@ if __name__ == "__main__":
     #Valmistellaan argumenttien lukeminen
     parser = argparse.ArgumentParser(
         description="You can use this program to show your statistics from WakaTime.",
-        usage="WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] FILE}")
+        usage="WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] [--start-date START_DATE] [--end-date END_DATE] FILE}")
     parser.add_argument("file", metavar="FILE", help="path to file with statistics")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-i", "--ignore", help="ignored stats: string with labels separated by commas (without spaces)")
+    parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
+    parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
 
     #Luetaan argumentit
     args = parser.parse_args()
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
+    start_date = datetime(int(args.start_date[0:4]), int(args.start_date[5:7]), int(args.start_date[8:10])).date() if args.start_date else datetime(1, 1, 1).date()
+    end_date = datetime(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10])).date() if args.end_date else datetime(9999, 12, 31).date()
 
-    #Jos käyttäjä ei antanut kumpaakaan valinnaista argumenttia
+    #Jos käyttäjä ei antanut kumpaakaan valinnaista argumenttia piirtämiseen
     if graphs == "" and totals == "":
         graphs = "leo"
         totals = "leo"

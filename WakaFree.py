@@ -282,7 +282,7 @@ def draw_graph(days, keys, datasets, colors_file_path):
             try:
                 fig.add_trace(go.Scatter(x=days, y=datasets[key], mode="lines", name=key, marker=dict(color=colors_data[key]["color"])))
             except Exception:
-                fig.add_trace(go.Scatter(x=days, y=datasets[key], mode="lines", name=key))
+                fig.add_trace(go.Scatter(x=days, y=datasets[key], mode="lines", name=key, marker=dict(color=colors_data["Other"]["color"])))
 
     fig.update_layout(yaxis_title="t (h)", plot_bgcolor="white")
     fig.update_xaxes(showline=True, linewidth=1, linecolor="black", mirror=True)

@@ -23,7 +23,7 @@ class Stats:
         return hours
 
     @staticmethod
-    def fetch_days_and_labels(data, days=days, languages=None, editors=None, operating_systems=None):
+    def fetch_days_and_labels(data, days=days, languages=None, editors=None, operating_systems=None, ignored_stats=[]):
         '''Lisää päivät listaan ja avaimet haluttuihin hakurakenteisiin.'''
         #Käydään läpi kaikki päivät
         for day in data["days"]:
@@ -34,19 +34,25 @@ class Stats:
             #Kielet
             if languages is not None:
                 for language in day["languages"]:
-                    if language["name"] not in languages:
+                    if language["name"] in ignored_stats:
+                        continue
+                    elif language["name"] not in languages:
                         languages[language["name"]] = []
         
             #Editorit
             if editors is not None:
                 for editor in day["editors"]:
-                    if editor["name"] not in editors:
+                    if editor["name"] in ignored_stats:
+                        continue
+                    elif editor["name"] not in editors:
                         editors[editor["name"]] = []
 
             #Käyttöjärjestelmät
             if operating_systems is not None:
                 for operating_system in day["operating_systems"]:
-                    if operating_system["name"] not in operating_systems:
+                    if operating_system["name"] in ignored_stats:
+                        continue
+                    elif operating_system["name"] not in operating_systems:
                         operating_systems[operating_system["name"]] = []
 
 class LanguagesStats(Stats):
@@ -81,6 +87,10 @@ class LanguagesStats(Stats):
 
                 #Käydään läpi kaikki kielet
                 for language in day["languages"]:
+
+                    #Ohitetaan kieli käyttäjän halutessa
+                    if language["name"] in ignored_stats:
+                        continue
 
                     #Lisätään kieleen kyseisen päivän tiedot tunneiksi muutettuna
                     self.languages[language["name"]].append(Stats.seconds_to_hours(language["total_seconds"]))
@@ -149,6 +159,10 @@ class EditorsStats(Stats):
                 #Käydään läpi kaikki editorit
                 for editor in day["editors"]:
 
+                    #Ohitetaan editori käyttäjän halutessa
+                    if editor["name"] in ignored_stats:
+                        continue
+
                     #Lisätään editoriin kyseisen päivän tiedot tunneiksi muutettuna
                     self.editors[editor["name"]].append(Stats.seconds_to_hours(editor["total_seconds"]))
 
@@ -215,6 +229,10 @@ class OperatingSystemsStats(Stats):
 
                 #Käydään läpi kaikki käyttöjärjestelmät
                 for operating_system in day["operating_systems"]:
+
+                    #Ohitetaan käyttöjärjestelmä käyttäjän halutessa
+                    if operating_system["name"] in ignored_stats:
+                        continue
 
                     #Lisätään käyttöjärjestelmään kyseisen päivän tiedot tunneiksi muutettuna
                     self.operating_systems[operating_system["name"]].append(Stats.seconds_to_hours(operating_system["total_seconds"]))
@@ -311,16 +329,19 @@ def draw_pie_chart(keys, total_times, colors_file_path):
 if __name__ == "__main__":
 
     #Valmistellaan argumenttien lukeminen
-    parser = argparse.ArgumentParser(description="You can use this program to show your statistics from WakaTime.",
-                                    usage="WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] FILE}")
+    parser = argparse.ArgumentParser(
+        description="You can use this program to show your statistics from WakaTime.",
+        usage="WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] FILE}")
     parser.add_argument("file", metavar="FILE", help="path to file with statistics")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
+    parser.add_argument("-i", "--ignore", help="ignored stats: string with labels separated by commas (without spaces)")
 
     #Luetaan argumentit
     args = parser.parse_args()
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
+    ignored_stats = args.ignore.split(",") if args.ignore else []
 
     #Jos käyttäjä ei antanut kumpaakaan valinnaista argumenttia
     if graphs == "" and totals == "":
@@ -346,7 +367,8 @@ if __name__ == "__main__":
                 data,
                 languages=languages.languages if "l" in (graphs + totals).lower() else None,
                 editors=editors.editors if "e" in (graphs + totals).lower() else None,
-                operating_systems=operating_systems.operating_systems if "o" in (graphs + totals).lower() else None)
+                operating_systems=operating_systems.operating_systems if "o" in (graphs + totals).lower() else None,
+                ignored_stats=ignored_stats)
 
             #Muunnetaan päivämäärät oikeaan muotoon
             Stats.convert_dates()

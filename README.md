@@ -1,4 +1,4 @@
-# WakaFree (v. 1.7)
+# WakaFree (v. 1.8)
 
 [English](#english)
 
@@ -29,12 +29,13 @@ Install the listed requirements. After that, clone the repository with the follo
 
 ### Usage
 
-`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] FILE}`
+`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] FILE}`
 
 The arguments in the square brackets are optional. The arguments are explained below:
 - -h / --help: Prints information about the program. With this argument, the positional argument FILE is not required.
 - -g / --graphs: Draws the graphs for daily stats. Use a string with l or L for programming languages, e or E for editors and o or O for operating systems.
 - -t / --totals: Shows total times. Use a string with l or L for programming languages, e or E for editors and o or O for operating systems.
+- -i / --ignore: Ignores stats with given labels. Use a string with labels separated by commas and nothing more.
 - FILE: The path for the file that contains the statistics from WakaTime. Can be downloaded from WakaTime by going to Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
 If neither of the optional arguments is given with FILE, then everything will be drawn.
@@ -72,12 +73,13 @@ Asenna vaatimuksissa mainitut asiat. Sen jälkeen kopioi säilö tietokoneellesi
 
 ### Käyttö
 
-`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] FILE}`
+`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] FILE}`
 
 Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty alapuolella:
 - -h / --help: Tulostaa tietoja ohjelmasta. Tämän argumentin kanssa argumentti FILE ei ole tarpeellinen.
 - -g / --graphs: Piirtää kuvaajat päivittäisten tietojen perusteella. Käytä merkkijonoa, jossa on l tai L ohjelmointikieliä varten, e tai E editoreja varten ja o tai O käyttöjärjestelmiä varten.
 - -t / --totals: Näyttää kokonaisajat. Käytä merkkijonoa, jossa on l tai L ohjelmointikieliä varten, e tai E editoreja varten ja o tai O käyttöjärjestelmiä varten.
+- -i / --ignore: Ohittaa tiedot annetuilla otsikoilla. Käytä merkkijonoa, jossa otsikot on erotettu toisistaan pelkillä pilkuilla.
 - FILE: Polku tiedostoon, joka sisältää WakaTimen tilastot. Voidaan ladata WakaTimesta kohdasta Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
 Jos kumpaakaan valinnaista argumenttia ei anneta FILE:n kanssa, piirretään kaikki kuvaajat.

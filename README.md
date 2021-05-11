@@ -40,7 +40,7 @@ The arguments in the square brackets are optional. The arguments are explained b
 - --end-date: Shows all dates ending in the given date. Use a string in format "YYYY-MM-DD". Inclusive. Dates are not appended to the stats if the given date is after the last date in the stats.
 - FILE: The path for the file that contains the statistics from WakaTime. Can be downloaded from WakaTime by going to Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
-If neither of the optional arguments is given with FILE, then everything will be drawn.
+If neither of the optional arguments for drawing the charts is given with FILE, then everything will be drawn.
 
 The program might not always manage to show the figures. This seems to be an issue with Plotly. In case this happens, simply run the program again. Having your default browser open might also help.
 
@@ -86,7 +86,7 @@ Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty a
 - --end-date: Näyttää tiedot annettuun päivään asti. Käytä muodossa "VVVV-KK-PP" olevaa merkkijonoa. Päivämäärä kuuluu piirrettävään väliin. Tyhjiä päiviä ei lisätä tilastojen loppuun, jos annettu päivämäärä on tilastojen viimeisen päivän jälkeen.
 - FILE: Polku tiedostoon, joka sisältää WakaTimen tilastot. Voidaan ladata WakaTimesta kohdasta Settings &#8594; Personal settings &#8594; Account &#8594; Export.
 
-Jos kumpaakaan valinnaista argumenttia ei anneta FILE:n kanssa, piirretään kaikki kuvaajat.
+Jos kumpaakaan valinnaista argumenttia kaavioiden piirtämiseen ei anneta FILE:n kanssa, piirretään kaikki kuvaajat.
 
 Ohjelma ei välttämättä aina onnistu näyttämään kaavioita. Ongelma vaikuttaa liittyvän Plotlyyn. Tällaisissa tapauksissa suorita ohjelma vain uudestaan. Oletusselaimen avaaminen ennen ohjelman suorittamista voi myös auttaa.
 

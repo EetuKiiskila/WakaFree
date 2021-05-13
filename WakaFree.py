@@ -355,7 +355,7 @@ if __name__ == "__main__":
     #Valmistellaan argumenttien lukeminen
     parser = argparse.ArgumentParser(
         description="You can use this program to show your statistics from WakaTime.",
-        usage="WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] [--start-date START_DATE] [--end-date END_DATE] FILE}")
+        usage="python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] [--start-date START_DATE] [--end-date END_DATE] FILE}")
     parser.add_argument("file", metavar="FILE", help="path to file with statistics")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")

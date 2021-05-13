@@ -42,8 +42,6 @@ The arguments in the square brackets are optional. The arguments are explained b
 
 If neither of the optional arguments for drawing the charts is given with FILE, then everything will be drawn.
 
-The program might not always manage to show the figures. This seems to be an issue with Plotly. In case this happens, simply run the program again. Having your default browser open might also help.
-
 ### Examples
 
 The following command draws all the charts based on the stats from the file *stats.json*:
@@ -53,6 +51,10 @@ The following command draws all the charts based on the stats from the file *sta
 The following command does the same:
 
 `python WakaFree.py -g leo -t leo stats.json`
+
+### Known issues
+
+The program might not always manage to show the figures. This seems to be an issue with Plotly. In case this happens, simply run the program again. Having your default browser open might also help.
 
 ## Suomi
 
@@ -88,8 +90,6 @@ Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty a
 
 Jos kumpaakaan valinnaista argumenttia kaavioiden piirtämiseen ei anneta FILE:n kanssa, piirretään kaikki kuvaajat.
 
-Ohjelma ei välttämättä aina onnistu näyttämään kaavioita. Ongelma vaikuttaa liittyvän Plotlyyn. Tällaisissa tapauksissa suorita ohjelma vain uudestaan. Oletusselaimen avaaminen ennen ohjelman suorittamista voi myös auttaa.
-
 ### Esimerkkejä
 
 Seuraava komento piirtää kaikki kuvaajat tiedoston *stats.json* sisältämistä tiedoista:
@@ -99,3 +99,7 @@ Seuraava komento piirtää kaikki kuvaajat tiedoston *stats.json* sisältämist�
 Seuraava komento tekee saman:
 
 `python WakaFree.py -g leo -t leo stats.json`
+
+### Tiedossa olevat ongelmat
+
+Ohjelma ei välttämättä aina onnistu näyttämään kaavioita. Ongelma vaikuttaa liittyvän Plotlyyn. Tällaisissa tapauksissa suorita ohjelma vain uudestaan. Oletusselaimen avaaminen ennen ohjelman suorittamista voi myös auttaa.

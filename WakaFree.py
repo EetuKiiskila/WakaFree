@@ -1,3 +1,4 @@
+import os.path
 import json
 import yaml
 from datetime import datetime
@@ -382,12 +383,15 @@ if __name__ == "__main__":
         #Avataan tiedosto
         with open(args.file, "r") as file:
 
+            #Projektin hakemisto
+            project_directory = os.path.dirname(__file__)
+
             #Luodaan oliot tietoja varten
             languages = LanguagesStats()
             editors = EditorsStats()
             operating_systems = OperatingSystemsStats()
 
-            #Luetaan tiedot
+            #Haetaan tiedot
             data = json.load(file)
 
             #Valmistellaan tietojen lukeminen
@@ -417,27 +421,27 @@ if __name__ == "__main__":
 
                 #Kielten kuvaajat
                 if "l" in graphs.lower():
-                    draw_graph(Stats.days, languages.keys, languages.languages, "Colors/languages_colors.yml")
+                    draw_graph(Stats.days, languages.keys, languages.languages, os.path.join(project_directory, "Colors/languages_colors.yml"))
 
                 #Editorien kuvaajat
                 if "e" in graphs.lower():
-                    draw_graph(Stats.days, editors.keys, editors.editors, "Colors/editors_colors.yml")
+                    draw_graph(Stats.days, editors.keys, editors.editors, os.path.join(project_directory, "Colors/editors_colors.yml"))
 
                 #Käyttöjärjestelmien kuvaajat
                 if "o" in graphs.lower():
-                    draw_graph(Stats.days, operating_systems.keys, operating_systems.operating_systems, "Colors/operating_systems_colors.yml")
+                    draw_graph(Stats.days, operating_systems.keys, operating_systems.operating_systems, os.path.join(project_directory, "Colors/operating_systems_colors.yml"))
 
             #Jos käyttäjä haluaa näyttää kokonaisajat
             if args.totals or (not args.graphs and not args.totals):
 
                 #Kielten kokonaisajat
                 if "l" in totals.lower():
-                    draw_pie_chart(languages.keys, languages.total_times, "Colors/languages_colors.yml")
+                    draw_pie_chart(languages.keys, languages.total_times, os.path.join(project_directory, "Colors/languages_colors.yml"))
 
                 #Editorien kokonaisajat
                 if "e" in totals.lower():
-                    draw_pie_chart(editors.keys, editors.total_times, "Colors/editors_colors.yml")
+                    draw_pie_chart(editors.keys, editors.total_times, os.path.join(project_directory, "Colors/editors_colors.yml"))
 
                 #Käyttöjärjestelmien kokonaisajat
                 if "o" in totals.lower():
-                    draw_pie_chart(operating_systems.keys, operating_systems.total_times, "Colors/operating_systems_colors.yml")
+                    draw_pie_chart(operating_systems.keys, operating_systems.total_times, os.path.join(project_directory, "Colors/operating_systems_colors.yml"))

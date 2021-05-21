@@ -2,6 +2,7 @@ import os.path
 import json
 import yaml
 from datetime import datetime
+import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 import argparse
@@ -79,8 +80,6 @@ class Stats:
                             continue
                         elif operating_system["name"] not in operating_systems:
                             operating_systems[operating_system["name"]] = []
-
-                    
 
 class LanguagesStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
@@ -160,8 +159,43 @@ class LanguagesStats(Stats):
             self.total_times.append(hours)
             self.keys.append(language)
 
+        if unify != 0.0:
+            self.unify_stats()
+
         #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
         self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
+
+    def unify_stats(self):
+        '''Yhdistää tiedot otsikon Other alle tietyn raja-arvon mukaisesti.'''
+        removed_at_indexes = []
+
+        #Lisätään tarvittaessa otsikko Other
+        if "Other" not in self.keys:
+            self.keys.append("Other")
+            self.total_times.append(0.0)
+            self.languages["Other"] = [value * 0.0 for value in self.languages[self.keys[0]]]
+
+        #Lisätään raja-arvon alittavat osuudet Otheriin
+        for index, total_time in enumerate(self.total_times):
+            if self.keys[index] == "Other":
+                continue
+            elif total_time / sum(self.total_times) * 100.0 < unify:
+                self.languages["Other"] = np.add(self.languages["Other"], self.languages[self.keys[index]]).tolist()
+                self.total_times[self.keys.index("Other")] += self.total_times[index]
+                removed_at_indexes.append(index)
+
+        #Poistetaan Other-otsikko ja sen tiedot, jos se on turha, ja poistutaan metodista
+        if len(removed_at_indexes) == 0:
+            del(self.total_times[self.keys.index("Other")])
+            del(self.languages["Other"])
+            self.keys.remove("Other")
+            return
+
+        #Poistetaan Otheriin yhdistettyjen tietojen päivittäiset tiedot, otsikot ja kokonaisajat
+        for index in reversed(removed_at_indexes):
+            del(self.languages[self.keys[index]])
+            del(self.keys[index])
+            del(self.total_times[index])
 
 class EditorsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri editoreille.'''
@@ -241,8 +275,43 @@ class EditorsStats(Stats):
             self.total_times.append(hours)
             self.keys.append(editor)
 
+        if unify != 0.0:
+            self.unify_stats()
+
         #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
         self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
+
+    def unify_stats(self):
+        '''Yhdistää tiedot otsikon Other alle tietyn raja-arvon mukaisesti.'''
+        removed_at_indexes = []
+
+        #Lisätään tarvittaessa otsikko Other
+        if "Other" not in self.keys:
+            self.keys.append("Other")
+            self.total_times.append(0.0)
+            self.editors["Other"] = [value * 0.0 for value in self.editors[self.keys[0]]]
+
+        #Lisätään raja-arvon alittavat osuudet Otheriin
+        for index, total_time in enumerate(self.total_times):
+            if self.keys[index] == "Other":
+                continue
+            elif total_time / sum(self.total_times) * 100.0 < unify:
+                self.editors["Other"] = np.add(self.editors["Other"], self.editors[self.keys[index]]).tolist()
+                self.total_times[self.keys.index("Other")] += self.total_times[index]
+                removed_at_indexes.append(index)
+
+        #Poistetaan Other-otsikko ja sen tiedot, jos se on turha, ja poistutaan metodista
+        if len(removed_at_indexes) == 0:
+            del(self.total_times[self.keys.index("Other")])
+            del(self.editors["Other"])
+            self.keys.remove("Other")
+            return
+
+        #Poistetaan Otheriin yhdistettyjen tietojen päivittäiset tiedot, otsikot ja kokonaisajat
+        for index in reversed(removed_at_indexes):
+            del(self.editors[self.keys[index]])
+            del(self.keys[index])
+            del(self.total_times[index])
 
 class OperatingSystemsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri käyttöjärjestelmille.'''
@@ -322,8 +391,43 @@ class OperatingSystemsStats(Stats):
             self.total_times.append(hours)
             self.keys.append(operating_system)
 
+        if unify != 0.0:
+            self.unify_stats()
+
         #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
         self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
+
+    def unify_stats(self):
+        '''Yhdistää tiedot otsikon Other alle tietyn raja-arvon mukaisesti.'''
+        removed_at_indexes = []
+
+        #Lisätään tarvittaessa otsikko Other
+        if "Other" not in self.keys:
+            self.keys.append("Other")
+            self.total_times.append(0.0)
+            self.operating_systems["Other"] = [value * 0.0 for value in self.operating_systems[self.keys[0]]]
+
+        #Lisätään raja-arvon alittavat osuudet Otheriin
+        for index, total_time in enumerate(self.total_times):
+            if self.keys[index] == "Other":
+                continue
+            elif total_time / sum(self.total_times) * 100.0 < unify:
+                self.operating_systems["Other"] = np.add(self.operating_systems["Other"], self.operating_systems[self.keys[index]]).tolist()
+                self.total_times[self.keys.index("Other")] += self.total_times[index]
+                removed_at_indexes.append(index)
+
+        #Poistetaan Other-otsikko ja sen tiedot, jos se on turha, ja poistutaan metodista
+        if len(removed_at_indexes) == 0:
+            del(self.total_times[self.keys.index("Other")])
+            del(self.operating_systems["Other"])
+            self.keys.remove("Other")
+            return
+
+        #Poistetaan Otheriin yhdistettyjen tietojen päivittäiset tiedot, otsikot ja kokonaisajat
+        for index in reversed(removed_at_indexes):
+            del(self.operating_systems[self.keys[index]])
+            del(self.keys[index])
+            del(self.total_times[index])
 
 #Piirretään kuvaajat
 def draw_graph(days, keys, datasets, colors_file_path):
@@ -388,12 +492,13 @@ if __name__ == "__main__":
     #Valmistellaan argumenttien lukeminen
     parser = argparse.ArgumentParser(
         description="You can use this program to show your statistics from WakaTime.",
-        usage="python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [--start-date START_DATE] [--end-date END_DATE] FILE}")
+        usage="python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}")
     parser.add_argument("file", metavar="FILE", help="path to file with statistics")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-i", "--ignore", help="ignored stats: string with labels separated by commas (without spaces)")
     parser.add_argument("-s", "--search", help="stats to search for: string with labels separated by commas (without spaces)")
+    parser.add_argument("-u", "--unify", help="add together (under label Other) stats with lesser percentage than the given value")
     parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
     parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
 
@@ -403,6 +508,7 @@ if __name__ == "__main__":
     totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
     searched_stats = args.search.split(",") if args.search else []
+    unify = float(args.unify) if args.unify else 0.0
     start_date = datetime(int(args.start_date[0:4]), int(args.start_date[5:7]), int(args.start_date[8:10])).date() if args.start_date else datetime(1, 1, 1).date()
     end_date = datetime(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10])).date() if args.end_date else datetime(9999, 12, 31).date()
 

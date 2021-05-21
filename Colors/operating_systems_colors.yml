@@ -6,3 +6,5 @@ Mac:
     color: "#4d66cb"
 Windows:
     color: "#00b7ee"
+Other:
+    color: "#1f9aef"

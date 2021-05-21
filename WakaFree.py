@@ -24,7 +24,7 @@ class Stats:
         return hours
 
     @staticmethod
-    def fetch_days_and_labels(data, days=days, languages=None, editors=None, operating_systems=None, ignored_stats=[]):
+    def fetch_days_and_labels(data, days=days, languages=None, editors=None, operating_systems=None, ignored_stats=[], searched_stats=[]):
         '''Lisää päivät listaan ja avaimet haluttuihin hakurakenteisiin.'''
         #Käydään läpi kaikki päivät
         for day in data["days"]:
@@ -41,26 +41,46 @@ class Stats:
             #Kielet
             if languages is not None:
                 for language in day["languages"]:
-                    if language["name"] in ignored_stats:
-                        continue
-                    elif language["name"] not in languages:
-                        languages[language["name"]] = []
+                    if len(searched_stats) == 0:
+                        if language["name"] in ignored_stats:
+                            continue
+                        elif language["name"] not in languages:
+                            languages[language["name"]] = []
+                    else:
+                        if language["name"] not in searched_stats:
+                            continue
+                        elif language["name"] not in languages:
+                            languages[language["name"]] = []
         
             #Editorit
             if editors is not None:
                 for editor in day["editors"]:
-                    if editor["name"] in ignored_stats:
-                        continue
-                    elif editor["name"] not in editors:
-                        editors[editor["name"]] = []
+                    if len(searched_stats) == 0:
+                        if editor["name"] in ignored_stats:
+                            continue
+                        elif editor["name"] not in editors:
+                            editors[editor["name"]] = []
+                    else:
+                        if editor["name"] not in searched_stats:
+                            continue
+                        elif editor["name"] not in editors:
+                            editors[editor["name"]] = []
 
             #Käyttöjärjestelmät
             if operating_systems is not None:
                 for operating_system in day["operating_systems"]:
-                    if operating_system["name"] in ignored_stats:
-                        continue
-                    elif operating_system["name"] not in operating_systems:
-                        operating_systems[operating_system["name"]] = []
+                    if len(searched_stats) == 0:
+                        if operating_system["name"] in ignored_stats:
+                            continue
+                        elif operating_system["name"] not in operating_systems:
+                            operating_systems[operating_system["name"]] = []
+                    else:
+                        if operating_system["name"] not in searched_stats:
+                            continue
+                        elif operating_system["name"] not in operating_systems:
+                            operating_systems[operating_system["name"]] = []
+
+                    
 
 class LanguagesStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
@@ -102,8 +122,12 @@ class LanguagesStats(Stats):
                 for language in day["languages"]:
 
                     #Ohitetaan kieli käyttäjän halutessa
-                    if language["name"] in ignored_stats:
-                        continue
+                    if len(searched_stats) == 0:
+                        if language["name"] in ignored_stats:
+                            continue
+                    else:
+                        if language["name"] not in searched_stats:
+                            continue
 
                     #Lisätään kieleen kyseisen päivän tiedot tunneiksi muutettuna
                     self.languages[language["name"]].append(Stats.seconds_to_hours(language["total_seconds"]))
@@ -179,8 +203,12 @@ class EditorsStats(Stats):
                 for editor in day["editors"]:
 
                     #Ohitetaan editori käyttäjän halutessa
-                    if editor["name"] in ignored_stats:
-                        continue
+                    if len(searched_stats) == 0:
+                        if editor["name"] in ignored_stats:
+                            continue
+                    else:
+                        if editor["name"] not in searched_stats:
+                            continue
 
                     #Lisätään editoriin kyseisen päivän tiedot tunneiksi muutettuna
                     self.editors[editor["name"]].append(Stats.seconds_to_hours(editor["total_seconds"]))
@@ -256,8 +284,12 @@ class OperatingSystemsStats(Stats):
                 for operating_system in day["operating_systems"]:
 
                     #Ohitetaan käyttöjärjestelmä käyttäjän halutessa
-                    if operating_system["name"] in ignored_stats:
-                        continue
+                    if len(searched_stats) == 0:
+                        if operating_system["name"] in ignored_stats:
+                            continue
+                    else:
+                        if operating_system["name"] not in searched_stats:
+                            continue
 
                     #Lisätään käyttöjärjestelmään kyseisen päivän tiedot tunneiksi muutettuna
                     self.operating_systems[operating_system["name"]].append(Stats.seconds_to_hours(operating_system["total_seconds"]))
@@ -356,11 +388,12 @@ if __name__ == "__main__":
     #Valmistellaan argumenttien lukeminen
     parser = argparse.ArgumentParser(
         description="You can use this program to show your statistics from WakaTime.",
-        usage="python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [-i IGNORE] [--start-date START_DATE] [--end-date END_DATE] FILE}")
+        usage="python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [--start-date START_DATE] [--end-date END_DATE] FILE}")
     parser.add_argument("file", metavar="FILE", help="path to file with statistics")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-i", "--ignore", help="ignored stats: string with labels separated by commas (without spaces)")
+    parser.add_argument("-s", "--search", help="stats to search for: string with labels separated by commas (without spaces)")
     parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
     parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
 
@@ -369,6 +402,7 @@ if __name__ == "__main__":
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
+    searched_stats = args.search.split(",") if args.search else []
     start_date = datetime(int(args.start_date[0:4]), int(args.start_date[5:7]), int(args.start_date[8:10])).date() if args.start_date else datetime(1, 1, 1).date()
     end_date = datetime(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10])).date() if args.end_date else datetime(9999, 12, 31).date()
 
@@ -400,7 +434,7 @@ if __name__ == "__main__":
                 languages=languages.languages if "l" in (graphs + totals).lower() else None,
                 editors=editors.editors if "e" in (graphs + totals).lower() else None,
                 operating_systems=operating_systems.operating_systems if "o" in (graphs + totals).lower() else None,
-                ignored_stats=ignored_stats)
+                ignored_stats=ignored_stats, searched_stats=searched_stats)
 
             #Muunnetaan päivämäärät oikeaan muotoon
             Stats.convert_dates()

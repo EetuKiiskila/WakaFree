@@ -1,4 +1,4 @@
-# WakaFree (v. 1.12)
+# WakaFree (v. 2)
 
 [English](#english)
 
@@ -20,6 +20,7 @@ You can use this program to show your statistics from WakaTime. You can also sav
 - Matplotlib: I have version 3.3.3 installed. I haven't tested any other versions.
 - pandas: I have version 1.2.3 installed. I haven't tested any other versions.
 - Plotly: I have version 4.14.3 installed. I haven't tested any other versions.
+- PySimpleGUI: I have version 4.41.2 installed. I haven't tested any other versions.
 
 ### Installation
 
@@ -29,10 +30,11 @@ Install the listed requirements. After that, clone the repository with the follo
 
 ### Usage
 
-`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}`
+`python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}`
 
 The arguments in the square brackets are optional. The arguments are explained below:
 - -h / --help: Prints information about the program. With this argument, the positional argument FILE is not required.
+- -G / --gui: Opens graphical user interface.
 - -g / --graphs: Draws the graphs for daily stats. Use a string with l or L for programming languages, e or E for editors and o or O for operating systems.
 - -t / --totals: Shows total times. Use a string with l or L for programming languages, e or E for editors and o or O for operating systems.
 - -i / --ignore: Ignores stats with given labels. Use a string with labels separated by commas and nothing more.
@@ -70,6 +72,7 @@ Voit käyttää tätä ohjelmaa WakaTimen keräämien tietojen näyttämiseen. V
 - Matplotlib: Minulla on asennettuna versio 3.3.3. En ole testannut muilla versioilla.
 - pandas: Minulla on asennettuna versio 1.2.3. En ole testannut muilla versioilla.
 - Plotly: Minulla on asennettuna versio 4.14.3. En ole testannut muilla versioilla.
+- PySimpleGUI: Minulla on asennettuna versio 4.41.2. En ole testannut muilla versioilla.
 
 ### Asennus
 
@@ -79,10 +82,11 @@ Asenna vaatimuksissa mainitut asiat. Sen jälkeen kopioi säilö tietokoneellesi
 
 ### Käyttö
 
-`python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}`
+`python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}`
 
 Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty alapuolella:
 - -h / --help: Tulostaa tietoja ohjelmasta. Tämän argumentin kanssa argumentti FILE ei ole tarpeellinen.
+- -G / --gui: Avaa graafisen käyttöliittymän.
 - -g / --graphs: Piirtää kuvaajat päivittäisten tietojen perusteella. Käytä merkkijonoa, jossa on l tai L ohjelmointikieliä varten, e tai E editoreja varten ja o tai O käyttöjärjestelmiä varten.
 - -t / --totals: Näyttää kokonaisajat. Käytä merkkijonoa, jossa on l tai L ohjelmointikieliä varten, e tai E editoreja varten ja o tai O käyttöjärjestelmiä varten.
 - -i / --ignore: Ohittaa tiedot annetuilla otsikoilla. Käytä merkkijonoa, jossa otsikot on erotettu toisistaan pelkillä pilkuilla.

@@ -1,11 +1,14 @@
 import os.path
 import json
+from PySimpleGUI.PySimpleGUI import VerticalSeparator
 import yaml
 from datetime import datetime
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 import argparse
+import PySimpleGUI as sg
+from yaml import events
 
 class Stats:
     '''Yliluokka, joka sisältää päivämäärät sekä metodin näiden muuttamiseksi oikeaan muotoon ja metodin sekuntien muuttamiseksi tunneiksi.'''
@@ -492,8 +495,9 @@ if __name__ == "__main__":
     #Valmistellaan argumenttien lukeminen
     parser = argparse.ArgumentParser(
         description="You can use this program to show your statistics from WakaTime.",
-        usage="python WakaFree.py {-h | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}")
-    parser.add_argument("file", metavar="FILE", help="path to file with statistics")
+        usage="python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}")
+    parser.add_argument("file", metavar="FILE", nargs="?", default="", help="path to file with statistics")
+    parser.add_argument("-G", "--gui", action="store_true", help="use graphical user interface")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-i", "--ignore", help="ignored stats: string with labels separated by commas (without spaces)")
@@ -504,6 +508,7 @@ if __name__ == "__main__":
 
     #Luetaan argumentit
     args = parser.parse_args()
+    file_name = args.file if args.file else ""
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
@@ -512,16 +517,77 @@ if __name__ == "__main__":
     start_date = datetime(int(args.start_date[0:4]), int(args.start_date[5:7]), int(args.start_date[8:10])).date() if args.start_date else datetime(1, 1, 1).date()
     end_date = datetime(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10])).date() if args.end_date else datetime(9999, 12, 31).date()
 
+    #Jos käyttäjä haluaa graafisen käyttöliittymän
+    if args.gui:
+        layout = [
+            [sg.Text("File*"), sg.InputText(), sg.FileBrowse(file_types=(("JSON Files", "*.json"),), key="input_file")],
+            [
+                sg.Text("Graphs"),
+                sg.Checkbox("Languages", default=True, key="input_graphs_l"),
+                sg.Checkbox("Editors", default=True, key="input_graphs_e"),
+                sg.Checkbox("Operating systems", default=True, key="input_graphs_o")
+            ],
+            [
+                sg.Text("Totals"),
+                sg.Checkbox("Languages", default=True, key="input_totals_l"),
+                sg.Checkbox("Editors", default=True, key="input_totals_e"),
+                sg.Checkbox("Operating systems", default=True, key="input_totals_o")
+            ],
+            [sg.Text("Ignore**"), sg.InputText(key="input_ignore"), sg.Text("or"), sg.Text("Search**"), sg.InputText(key="input_search")],
+            [sg.Text("Unify"), sg.InputText("0.0", key="input_unify")],
+            [sg.Text("Start date"), sg.InputText("YYYY-MM-DD", key="input_start_date")],
+            [sg.Text("End date"), sg.InputText("YYYY-MM-DD", key="input_end_date")],
+            [sg.OK()],
+            [sg.HorizontalSeparator()],
+            [sg.Text("* Required")],
+            [sg.Text("** Labels separated by commas only")]
+        ]
+
+        window = sg.Window("WakaFree", layout)
+
+        while True:
+            event, values = window.read()
+            if event in (sg.WIN_CLOSED, "Cancel"):
+                break
+            elif event == "OK":
+                file_name = values["input_file"]
+
+                graphs += "l" if values["input_graphs_l"] else ""
+                graphs += "e" if values["input_graphs_e"] else ""
+                graphs += "o" if values["input_graphs_o"] else ""
+
+                totals += "l" if values["input_totals_l"] else ""
+                totals += "e" if values["input_totals_e"] else ""
+                totals += "o" if values["input_totals_o"] else ""
+
+                ignored_stats = values["input_ignore"].split(",") if values["input_ignore"] != "" else []
+                searched_stats = values["input_search"].split(",") if values["input_search"] != "" else []
+
+                unify = float(values["input_unify"])
+
+                try:
+                    start_date = datetime(int(values["input_start_date"][0:4]), int(values["input_start_date"][5:7]), int(values["input_start_date"][8:10])).date()
+                except:
+                    start_date = datetime(1, 1, 1).date()
+                try:
+                    end_date = datetime(int(values["input_end_date"][0:4]), int(values["input_end_date"][5:7]), int(values["input_end_date"][8:10])).date()
+                except:
+                    end_date = datetime(9999, 12, 31).date()
+
+                break
+
+        window.close()
+
     #Jos käyttäjä ei antanut kumpaakaan valinnaista argumenttia piirtämiseen
     if graphs == "" and totals == "":
         graphs = "leo"
         totals = "leo"
 
     #Jos käyttäjä antaa tiedoston
-    if args.file:
+    if file_name != "":
 
         #Avataan tiedosto
-        with open(args.file, "r") as file:
+        with open(file_name, "r") as file:
 
             #Projektin hakemisto
             project_directory = os.path.dirname(__file__)
@@ -557,7 +623,7 @@ if __name__ == "__main__":
                 operating_systems.sort_stats_and_populate_keys()
 
             #Jos käyttäjä haluaa piirtää kuvaajat
-            if args.graphs or (not args.graphs and not args.totals):
+            if graphs != "" or (graphs == "" and totals == ""):
 
                 #Kielten kuvaajat
                 if "l" in graphs.lower():
@@ -572,7 +638,7 @@ if __name__ == "__main__":
                     draw_graph(Stats.days, operating_systems.keys, operating_systems.operating_systems, os.path.join(project_directory, "Colors/operating_systems_colors.yml"))
 
             #Jos käyttäjä haluaa näyttää kokonaisajat
-            if args.totals or (not args.graphs and not args.totals):
+            if totals != "" or (graphs == "" and totals == ""):
 
                 #Kielten kokonaisajat
                 if "l" in totals.lower():

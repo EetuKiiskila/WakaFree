@@ -524,7 +524,7 @@ if __name__ == "__main__":
             pass
 
         layout = [
-            [sg.Text("File*"), sg.InputText(), sg.FileBrowse(file_types=(("JSON Files", "*.json"),), key="input_file")],
+            [sg.Text("File*"), sg.InputText(key="input_file"), sg.FileBrowse(file_types=(("JSON Files", "*.json"),))],
             [
                 sg.Text("Graphs"),
                 sg.Checkbox("Languages", default=True, key="input_graphs_l"),
@@ -539,8 +539,8 @@ if __name__ == "__main__":
             ],
             [sg.Text("Ignore**"), sg.InputText(key="input_ignore"), sg.Text("or"), sg.Text("Search**"), sg.InputText(key="input_search")],
             [sg.Text("Unify"), sg.InputText("0.0", key="input_unify")],
-            [sg.Text("Start date"), sg.InputText("YYYY-MM-DD", key="input_start_date")],
-            [sg.Text("End date"), sg.InputText("YYYY-MM-DD", key="input_end_date")],
+            [sg.Text("Start date"), sg.InputText("YYYY-MM-DD", key="input_start_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
+            [sg.Text("End date"), sg.InputText("YYYY-MM-DD", key="input_end_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
             [sg.OK()],
             [sg.HorizontalSeparator()],
             [sg.Text("* Required")],

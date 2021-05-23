@@ -1,5 +1,6 @@
 import os.path
 import json
+from typing import Text
 import yaml
 from datetime import datetime
 import numpy as np
@@ -523,28 +524,39 @@ if __name__ == "__main__":
         except:
             pass
 
+        help_file = "The file that contains your statistics."
+        help_graphs = "Daily statistics."
+        help_totals = "Total times."
+        help_ignore = "Ignored stats. Labels separated by commas and nothing more."
+        help_search = "Stats to search for. Labels separated by commas and nothing more.\nIf nothing is entered then all the stats in the given file will be read."
+        help_minimum_labeling_percentage = "Inclusive lover limit for labeling the stats.\nEverything under this percentage will be moved to the group Other."
+        help_start_date = "Start date in format YYYY-MM-DD. Inclusive.\nIf no date is entered then the stats will be drawn from the very beginning."
+        help_end_date = "End date in format YYYY-MM-DD. Inclusive.\nIf no date is entered then the stats will be drawn to the very end."
+
         layout = [
-            [sg.Text("File*"), sg.InputText(key="input_file"), sg.FileBrowse(file_types=(("JSON Files", "*.json"),))],
+            [sg.Text("Hover over a variable name to get help.")],
+            [sg.HorizontalSeparator()],
+            [sg.Text("File*", tooltip=help_file), sg.InputText(key="input_file"), sg.FileBrowse(file_types=(("JSON Files", "*.json"),))],
             [
-                sg.Text("Graphs"),
+                sg.Text("Graphs", tooltip=help_graphs),
                 sg.Checkbox("Languages", default=True, key="input_graphs_l"),
                 sg.Checkbox("Editors", default=True, key="input_graphs_e"),
                 sg.Checkbox("Operating systems", default=True, key="input_graphs_o")
             ],
             [
-                sg.Text("Totals"),
+                sg.Text("Totals", tooltip=help_totals),
                 sg.Checkbox("Languages", default=True, key="input_totals_l"),
                 sg.Checkbox("Editors", default=True, key="input_totals_e"),
                 sg.Checkbox("Operating systems", default=True, key="input_totals_o")
             ],
-            [sg.Text("Ignore**"), sg.InputText(key="input_ignore"), sg.Text("or"), sg.Text("Search**"), sg.InputText(key="input_search")],
-            [sg.Text("Minimum labeling percentage"), sg.InputText("0.0", key="input_minimum_labeling_percentage"), sg.Text("%")],
-            [sg.Text("Start date"), sg.InputText("YYYY-MM-DD", key="input_start_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
-            [sg.Text("End date"), sg.InputText("YYYY-MM-DD", key="input_end_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
+            [sg.Text("Ignore**", tooltip=help_ignore), sg.InputText(key="input_ignore"), sg.Text("or"), sg.Text("Search**", tooltip=help_search), sg.InputText(key="input_search")],
+            [sg.Text("Minimum labeling percentage", tooltip=help_minimum_labeling_percentage), sg.InputText("0.0", key="input_minimum_labeling_percentage"), sg.Text("%")],
+            [sg.Text("Start date", tooltip=help_start_date), sg.InputText("YYYY-MM-DD", key="input_start_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
+            [sg.Text("End date", tooltip=help_end_date), sg.InputText("YYYY-MM-DD", key="input_end_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
             [sg.OK()],
             [sg.HorizontalSeparator()],
-            [sg.Text("* Required")],
-            [sg.Text("** Labels separated by commas only")]
+            [sg.Text("* Required.")],
+            [sg.Text("** Labels separated by commas only.")]
         ]
 
         window = sg.Window("WakaFree", layout)

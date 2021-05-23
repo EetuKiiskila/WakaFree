@@ -161,7 +161,7 @@ class LanguagesStats(Stats):
             self.total_times.append(hours)
             self.keys.append(language)
 
-        if unify != 0.0:
+        if minimum_labeling_percentage != 0.0:
             self.unify_stats()
 
         #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
@@ -181,7 +181,7 @@ class LanguagesStats(Stats):
         for index, total_time in enumerate(self.total_times):
             if self.keys[index] == "Other":
                 continue
-            elif total_time / sum(self.total_times) * 100.0 < unify:
+            elif total_time / sum(self.total_times) * 100.0 < minimum_labeling_percentage:
                 self.languages["Other"] = np.add(self.languages["Other"], self.languages[self.keys[index]]).tolist()
                 self.total_times[self.keys.index("Other")] += self.total_times[index]
                 removed_at_indexes.append(index)
@@ -277,7 +277,7 @@ class EditorsStats(Stats):
             self.total_times.append(hours)
             self.keys.append(editor)
 
-        if unify != 0.0:
+        if minimum_labeling_percentage != 0.0:
             self.unify_stats()
 
         #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
@@ -297,7 +297,7 @@ class EditorsStats(Stats):
         for index, total_time in enumerate(self.total_times):
             if self.keys[index] == "Other":
                 continue
-            elif total_time / sum(self.total_times) * 100.0 < unify:
+            elif total_time / sum(self.total_times) * 100.0 < minimum_labeling_percentage:
                 self.editors["Other"] = np.add(self.editors["Other"], self.editors[self.keys[index]]).tolist()
                 self.total_times[self.keys.index("Other")] += self.total_times[index]
                 removed_at_indexes.append(index)
@@ -393,7 +393,7 @@ class OperatingSystemsStats(Stats):
             self.total_times.append(hours)
             self.keys.append(operating_system)
 
-        if unify != 0.0:
+        if minimum_labeling_percentage != 0.0:
             self.unify_stats()
 
         #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
@@ -413,7 +413,7 @@ class OperatingSystemsStats(Stats):
         for index, total_time in enumerate(self.total_times):
             if self.keys[index] == "Other":
                 continue
-            elif total_time / sum(self.total_times) * 100.0 < unify:
+            elif total_time / sum(self.total_times) * 100.0 < minimum_labeling_percentage:
                 self.operating_systems["Other"] = np.add(self.operating_systems["Other"], self.operating_systems[self.keys[index]]).tolist()
                 self.total_times[self.keys.index("Other")] += self.total_times[index]
                 removed_at_indexes.append(index)
@@ -494,14 +494,14 @@ if __name__ == "__main__":
     #Valmistellaan argumenttien lukeminen
     parser = argparse.ArgumentParser(
         description="You can use this program to show your statistics from WakaTime.",
-        usage="python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}")
+        usage="python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-m MINIMUM_LABELING_PERCENTAGE] [--start-date START_DATE] [--end-date END_DATE] FILE}")
     parser.add_argument("file", metavar="FILE", nargs="?", default="", help="path to file with statistics")
     parser.add_argument("-G", "--gui", action="store_true", help="use graphical user interface")
     parser.add_argument("-g", "--graphs", help="show daily statistics: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-t", "--totals", help="show total times: string with l, e, o for languages, editors, operating systems")
     parser.add_argument("-i", "--ignore", help="ignored stats: string with labels separated by commas (without spaces)")
     parser.add_argument("-s", "--search", help="stats to search for: string with labels separated by commas (without spaces)")
-    parser.add_argument("-u", "--unify", help="add together (under label Other) stats with lesser percentage than the given value")
+    parser.add_argument("-m", "--minimum-labeling-percentage", help="add together (under label Other) stats with lesser percentage than the given value")
     parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
     parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
 
@@ -512,7 +512,7 @@ if __name__ == "__main__":
     totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
     searched_stats = args.search.split(",") if args.search else []
-    unify = float(args.unify) if args.unify else 0.0
+    minimum_labeling_percentage = float(args.minimum_labeling_percentage) if args.minimum_labeling_percentage else 0.0
     start_date = datetime(int(args.start_date[0:4]), int(args.start_date[5:7]), int(args.start_date[8:10])).date() if args.start_date else datetime(1, 1, 1).date()
     end_date = datetime(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10])).date() if args.end_date else datetime(9999, 12, 31).date()
 
@@ -538,7 +538,7 @@ if __name__ == "__main__":
                 sg.Checkbox("Operating systems", default=True, key="input_totals_o")
             ],
             [sg.Text("Ignore**"), sg.InputText(key="input_ignore"), sg.Text("or"), sg.Text("Search**"), sg.InputText(key="input_search")],
-            [sg.Text("Unify"), sg.InputText("0.0", key="input_unify")],
+            [sg.Text("Minimum labeling percentage"), sg.InputText("0.0", key="input_minimum_labeling_percentage")],
             [sg.Text("Start date"), sg.InputText("YYYY-MM-DD", key="input_start_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
             [sg.Text("End date"), sg.InputText("YYYY-MM-DD", key="input_end_date"), sg.CalendarButton("Calendar", format="%Y-%m-%d")],
             [sg.OK()],
@@ -567,7 +567,7 @@ if __name__ == "__main__":
                 ignored_stats = values["input_ignore"].split(",") if values["input_ignore"] != "" else []
                 searched_stats = values["input_search"].split(",") if values["input_search"] != "" else []
 
-                unify = float(values["input_unify"])
+                minimum_labeling_percentage = float(values["input_minimum_labeling_percentage"])
 
                 try:
                     start_date = datetime(int(values["input_start_date"][0:4]), int(values["input_start_date"][5:7]), int(values["input_start_date"][8:10])).date()

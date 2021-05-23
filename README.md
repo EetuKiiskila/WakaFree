@@ -1,4 +1,4 @@
-# WakaFree (v. 2.2)
+# WakaFree (v. 2.3)
 
 [English](#english)
 
@@ -30,7 +30,7 @@ Install the listed requirements. After that, clone the repository with the follo
 
 ### Usage
 
-`python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}`
+`python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-m MINIMUM_LABELING_PERCENTAGE] [--start-date START_DATE] [--end-date END_DATE] FILE}`
 
 The arguments in the square brackets are optional. The arguments are explained below:
 - -h / --help: Prints information about the program. With this argument, the positional argument FILE is not required.
@@ -39,7 +39,7 @@ The arguments in the square brackets are optional. The arguments are explained b
 - -t / --totals: Shows total times. Use a string with l or L for programming languages, e or E for editors and o or O for operating systems.
 - -i / --ignore: Ignores stats with given labels. Use a string with labels separated by commas and nothing more.
 - -s / --search: Searches for stats with given labels. Use a string with labels separated by commas and nothing more.
-- -u / --unify: Adds together stats with lesser percentage than the given value (without percent sign). The stats are grouped under the label *Other*.
+- -m / --minimum-labeling-percentage: Inclusive lower limit for labeling the stats. Everything under this percentage will be moved to the group *Other*. If this argument is not passed then the stats will all have their own labels. Some of the stats collected by WakaTime might be labeled as *Other* so it is possible to see a group with that name even without this argument. Use a percentage without percent sign.
 - --start-date: Shows all dates starting from the given date. Use a string in format "YYYY-MM-DD". Inclusive. Dates are not prepended to the stats if the given date is before the first date in the stats.
 - --end-date: Shows all dates ending in the given date. Use a string in format "YYYY-MM-DD". Inclusive. Dates are not appended to the stats if the given date is after the last date in the stats.
 - FILE: The path for the file that contains the statistics from WakaTime. Can be downloaded from WakaTime by going to Settings &#8594; Personal settings &#8594; Account &#8594; Export.
@@ -55,6 +55,14 @@ The following command draws all the charts based on the stats from the file *sta
 The following command does the same:
 
 `python WakaFree.py -g leo -t leo stats.json`
+
+The following command opens the program with the graphical user interface:
+
+`python WakaFree.py -G`
+
+The following command does the same:
+
+`python WakaFree.py --gui`
 
 ### Known issues
 
@@ -82,7 +90,7 @@ Asenna vaatimuksissa mainitut asiat. Sen jälkeen kopioi säilö tietokoneellesi
 
 ### Käyttö
 
-`python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-u UNIFY] [--start-date START_DATE] [--end-date END_DATE] FILE}`
+`python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS] [{-i IGNORE | -s SEARCH}] [-m MINIMUM_LABELING_PERCENTAGE] [--start-date START_DATE] [--end-date END_DATE] FILE}`
 
 Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty alapuolella:
 - -h / --help: Tulostaa tietoja ohjelmasta. Tämän argumentin kanssa argumentti FILE ei ole tarpeellinen.
@@ -91,7 +99,7 @@ Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty a
 - -t / --totals: Näyttää kokonaisajat. Käytä merkkijonoa, jossa on l tai L ohjelmointikieliä varten, e tai E editoreja varten ja o tai O käyttöjärjestelmiä varten.
 - -i / --ignore: Ohittaa tiedot annetuilla otsikoilla. Käytä merkkijonoa, jossa otsikot on erotettu toisistaan pelkillä pilkuilla.
 - -s / --search: Etsii tietoja annetuilla otsikoilla. Käytä merkkijonoa, jossa otsikot on erotettu toisistaan pelkillä pilkuilla.
-- -u / --unify: Yhdistää tiedot, joiden osuus on alle annetun prosenttiluvun (ilman prosenttimerkkiä). Tiedot luokitellaan otsikon *Other* alle.
+- -m / --minimum-labeling-percentage: Alaraja, jolla tiedot luokitellaan omalla otsikollaan. Tiedot, joiden osuus on alle annetun prosenttiluvun, yhdistetään otsikon *Other* alle. Jos tätä argumenttia ei käytetä, kaikki tiedot luokitellaan oman otsikonsa mukaisesti. Osalla WakaTimen keräämistä tiedoista voi olla otsikko *Other*, joten on mahdollista nähdä kyseinen otsikko myös ilman tätä argumenttia. Käytä prosenttilukua ilman prosenttimerkkiä.
 - --start-date: Näyttää tiedot annetusta päivästä alkaen. Käytä muodossa "VVVV-KK-PP" olevaa merkkijonoa. Päivämäärä kuuluu piirrettävään väliin. Tyhjiä päiviä ei lisätä tilastojen alkuun, jos annettu päivämäärä on ennen tilastojen ensimmäistä päivää.
 - --end-date: Näyttää tiedot annettuun päivään asti. Käytä muodossa "VVVV-KK-PP" olevaa merkkijonoa. Päivämäärä kuuluu piirrettävään väliin. Tyhjiä päiviä ei lisätä tilastojen loppuun, jos annettu päivämäärä on tilastojen viimeisen päivän jälkeen.
 - FILE: Polku tiedostoon, joka sisältää WakaTimen tilastot. Voidaan ladata WakaTimesta kohdasta Settings &#8594; Personal settings &#8594; Account &#8594; Export.
@@ -107,6 +115,14 @@ Seuraava komento piirtää kaikki kuvaajat tiedoston *stats.json* sisältämist�
 Seuraava komento tekee saman:
 
 `python WakaFree.py -g leo -t leo stats.json`
+
+Seuraava komento avaa ohjelman graafisella käyttöliittymällä:
+
+`python WakaFree.py -G`
+
+Seuraava komento tekee saman:
+
+`python WakaFree.py --gui`
 
 ### Tiedossa olevat ongelmat
 

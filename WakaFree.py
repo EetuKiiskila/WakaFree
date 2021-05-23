@@ -1,14 +1,13 @@
 import os.path
 import json
-from PySimpleGUI.PySimpleGUI import VerticalSeparator
 import yaml
 from datetime import datetime
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 import argparse
+import ctypes
 import PySimpleGUI as sg
-from yaml import events
 
 class Stats:
     '''Yliluokka, joka sisältää päivämäärät sekä metodin näiden muuttamiseksi oikeaan muotoon ja metodin sekuntien muuttamiseksi tunneiksi.'''
@@ -519,6 +518,11 @@ if __name__ == "__main__":
 
     #Jos käyttäjä haluaa graafisen käyttöliittymän
     if args.gui:
+        try:
+            ctypes.windll.shcore.SetProcessDpiAwareness(True)
+        except:
+            pass
+
         layout = [
             [sg.Text("File*"), sg.InputText(), sg.FileBrowse(file_types=(("JSON Files", "*.json"),), key="input_file")],
             [

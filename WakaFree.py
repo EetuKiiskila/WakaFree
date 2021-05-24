@@ -1,6 +1,5 @@
 import os.path
 import json
-from typing import Text
 import yaml
 from datetime import datetime
 import numpy as np
@@ -98,6 +97,9 @@ class LanguagesStats(Stats):
 
             data -- JSON-tiedostosta luetut tiedot.
         '''
+        #Kuinka monen päivän tiedot on lisätty kieliin
+        number_of_days = 0
+
         #Käydään läpi kaikki päivät
         for day in data["days"]:
 
@@ -107,8 +109,7 @@ class LanguagesStats(Stats):
             elif day["date"] > str(end_date):
                 continue
 
-            #Kuinka monen päivän tiedot on lisätty kieliin
-            number_of_days = 0
+            number_of_days += 1
 
             #Jos päivälle ei löydy tietoja kielistä
             if len(day["languages"]) == 0:
@@ -133,10 +134,6 @@ class LanguagesStats(Stats):
 
                     #Lisätään kieleen kyseisen päivän tiedot tunneiksi muutettuna
                     self.languages[language["name"]].append(Stats.seconds_to_hours(language["total_seconds"]))
-
-                    #Tarkistetaan, monenko päivän tiedot on lisätty kieliin
-                    if len(self.languages[language["name"]]) > number_of_days:
-                        number_of_days = len(self.languages[language["name"]])
 
             #Käydään läpi kaikki kielet
             for language in self.languages:
@@ -176,7 +173,7 @@ class LanguagesStats(Stats):
         if "Other" not in self.keys:
             self.keys.append("Other")
             self.total_times.append(0.0)
-            self.languages["Other"] = [value * 0.0 for value in self.languages[self.keys[0]]]
+            self.languages["Other"] = [0.0 for value in self.languages[self.keys[0]]]
 
         #Lisätään raja-arvon alittavat osuudet Otheriin
         for index, total_time in enumerate(self.total_times):
@@ -214,6 +211,9 @@ class EditorsStats(Stats):
 
             data -- JSON-tiedostosta luetut tiedot.
         '''
+        #Kuinka monen päivän tiedot on lisätty editoreihin
+        number_of_days = 0
+
         #Käydään läpi kaikki päivät
         for day in data["days"]:
 
@@ -223,8 +223,7 @@ class EditorsStats(Stats):
             elif day["date"] > str(end_date):
                 continue
 
-            #Kuinka monen päivän tiedot on lisätty editoreihin
-            number_of_days = 0
+            number_of_days += 1
 
             #Jos päivälle ei löydy tietoja editoreista
             if len(day["editors"]) == 0:
@@ -249,10 +248,6 @@ class EditorsStats(Stats):
 
                     #Lisätään editoriin kyseisen päivän tiedot tunneiksi muutettuna
                     self.editors[editor["name"]].append(Stats.seconds_to_hours(editor["total_seconds"]))
-
-                    #Tarkistetaan, monenko päivän tiedot on lisätty editoreihin
-                    if len(self.editors[editor["name"]]) > number_of_days:
-                        number_of_days = len(self.editors[editor["name"]])
 
             #Käydään läpi kaikki editorit
             for editor in self.editors:
@@ -292,7 +287,7 @@ class EditorsStats(Stats):
         if "Other" not in self.keys:
             self.keys.append("Other")
             self.total_times.append(0.0)
-            self.editors["Other"] = [value * 0.0 for value in self.editors[self.keys[0]]]
+            self.editors["Other"] = [0.0 for value in self.editors[self.keys[0]]]
 
         #Lisätään raja-arvon alittavat osuudet Otheriin
         for index, total_time in enumerate(self.total_times):
@@ -330,6 +325,9 @@ class OperatingSystemsStats(Stats):
 
             data -- JSON-tiedostosta luetut tiedot.
         '''
+        #Kuinka monen päivän tiedot on lisätty käyttöjärjestelmiin
+        number_of_days = 0
+
         #Käydään läpi kaikki päivät
         for day in data["days"]:
 
@@ -339,8 +337,7 @@ class OperatingSystemsStats(Stats):
             elif day["date"] > str(end_date):
                 continue
 
-            #Kuinka monen päivän tiedot on lisätty käyttöjärjestelmiin
-            number_of_days = 0
+            number_of_days += 1
 
             #Jos päivälle ei löydy tietoja käyttöjärjestelmistä
             if len(day["operating_systems"]) == 0:
@@ -365,10 +362,6 @@ class OperatingSystemsStats(Stats):
 
                     #Lisätään käyttöjärjestelmään kyseisen päivän tiedot tunneiksi muutettuna
                     self.operating_systems[operating_system["name"]].append(Stats.seconds_to_hours(operating_system["total_seconds"]))
-
-                    #Tarkistetaan, monenko päivän tiedot on lisätty käyttöjärjestelmiin
-                    if len(self.operating_systems[operating_system["name"]]) > number_of_days:
-                        number_of_days = len(self.operating_systems[operating_system["name"]])
 
             #Käydään läpi kaikki käyttöjärjestelmät
             for operating_system in self.operating_systems:
@@ -408,7 +401,7 @@ class OperatingSystemsStats(Stats):
         if "Other" not in self.keys:
             self.keys.append("Other")
             self.total_times.append(0.0)
-            self.operating_systems["Other"] = [value * 0.0 for value in self.operating_systems[self.keys[0]]]
+            self.operating_systems["Other"] = [0.0 for value in self.operating_systems[self.keys[0]]]
 
         #Lisätään raja-arvon alittavat osuudet Otheriin
         for index, total_time in enumerate(self.total_times):

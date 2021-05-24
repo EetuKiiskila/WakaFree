@@ -1,11 +1,11 @@
 import os.path
+import argparse
 import json
 import yaml
 from datetime import datetime
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-import argparse
 import ctypes
 import PySimpleGUI as sg
 
@@ -660,3 +660,8 @@ if __name__ == "__main__":
                 #Käyttöjärjestelmien kokonaisajat
                 if "o" in totals.lower():
                     draw_pie_chart(operating_systems.keys, operating_systems.total_times, os.path.join(project_directory, "Colors/operating_systems_colors.yml"))
+
+    #Jos käyttäjä ei antanut tiedostoa tai mitään vaihtoehtoista argumenttia
+    else:
+        if not args.gui:
+            print("\nYou did not specify what you would like to do. To get help, try using either of the following commands:\n\npython WakaFree.py -h\npython WakaFree.py --help")

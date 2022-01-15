@@ -4,7 +4,6 @@ import json
 import yaml
 from datetime import datetime
 import numpy as np
-import plotly.express as px
 import GraphicalUserInterface
 import Plotting
 
@@ -533,43 +532,6 @@ class OperatingSystemsStats(Stats):
             del(self.total_times[index])
 
 
-#Piirretään ympyrädiagrammi
-def draw_pie_chart(keys, total_times, colors_file_path):
-
-    labels = []
-    colors = []
-
-    total_hours = 0
-
-    with open(colors_file_path, "r") as colors_file:
-
-        colors_data = yaml.safe_load(colors_file)
-
-        #Käydään läpi kaikki tiedot
-        for index, key in enumerate(keys):
-
-            hours = total_times[index]
-
-            #Lisätään aika kokonaisaikaan
-            total_hours += hours
-
-            #Lisätään otsikko listoihin
-            labels.append(key + " - {0} h {1} min".format(int(hours), int((hours - int(hours)) * 60)))
-            try:
-                colors.append(colors_data[key]["color"])
-            except Exception:
-                colors.append(colors_data["Other"]["color"])
-
-    #Lisätään prosenttiosuudet selitteeseen
-    for index, time in  enumerate(total_times):
-        labels[index] += " ({0:.2f} %)".format(total_times[index] / total_hours * 100)
-
-    #Piirretään ympyrädiagrammi
-    fig = px.pie(names=labels, values=total_times, color_discrete_sequence=colors)
-    fig.update_traces(marker=dict(line=dict(color="black", width=0.5)), textinfo="none", hovertemplate=labels)
-    fig.show()
-
-
 def main():
     # Initialize argument parser
     parser = initialize_argument_parser()
@@ -683,15 +645,15 @@ if __name__ == "__main__":
 
                 #Kielten kokonaisajat
                 if "l" in totals.lower():
-                    draw_pie_chart(languages.keys, languages.total_times, os.path.join(project_directory, "Colors/languages_colors.yml"))
+                    Plotting.draw_pie_chart(languages.keys, languages.total_times, "languages")
 
                 #Editorien kokonaisajat
                 if "e" in totals.lower():
-                    draw_pie_chart(editors.keys, editors.total_times, os.path.join(project_directory, "Colors/editors_colors.yml"))
+                    Plotting.draw_pie_chart(editors.keys, editors.total_times, "editors")
 
                 #Käyttöjärjestelmien kokonaisajat
                 if "o" in totals.lower():
-                    draw_pie_chart(operating_systems.keys, operating_systems.total_times, os.path.join(project_directory, "Colors/operating_systems_colors.yml"))
+                    Plotting.draw_pie_chart(operating_systems.keys, operating_systems.total_times, "operating_systems")
 
     #Jos käyttäjä ei antanut tiedostoa tai mitään vaihtoehtoista argumenttia
     else:

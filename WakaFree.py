@@ -10,16 +10,24 @@ import ctypes
 import PySimpleGUI as sg
 
 
-class Stats:
-    '''Yliluokka, joka sisältää päivämäärät sekä metodin näiden muuttamiseksi oikeaan muotoon ja metodin sekuntien muuttamiseksi tunneiksi.'''
+def string_to_date(date_string):
+    """Convert a string to a datetime date.
 
+    :param date_string: Date string in format YYYY-MM-DD.
+    :return: Date as a datetime date.
+    """
+    return datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
+
+
+class Stats:
+    """Class that contains stats and methods for modifying them."""
     days = []
 
     @classmethod
     def convert_dates(cls, days=days):
         '''Muuntaa merkkijonoina olevat päivämäärät oikean tyyppisiksi.'''
         for index, day in enumerate(days):
-            days[index] = datetime(int(day[0:4]), int(day[5:7]), int(day[8:10])).date()
+            days[index] = string_to_date(day)
 
     @staticmethod
     def seconds_to_hours(seconds):

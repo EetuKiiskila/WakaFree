@@ -9,6 +9,7 @@ import plotly.express as px
 import ctypes
 import PySimpleGUI as sg
 
+
 class Stats:
     '''Yliluokka, joka sisältää päivämäärät sekä metodin näiden muuttamiseksi oikeaan muotoon ja metodin sekuntien muuttamiseksi tunneiksi.'''
 
@@ -82,6 +83,7 @@ class Stats:
                             continue
                         elif operating_system["name"] not in operating_systems:
                             operating_systems[operating_system["name"]] = []
+
 
 class LanguagesStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
@@ -197,6 +199,7 @@ class LanguagesStats(Stats):
             del(self.keys[index])
             del(self.total_times[index])
 
+
 class EditorsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri editoreille.'''
     def __init__(self):
@@ -310,6 +313,7 @@ class EditorsStats(Stats):
             del(self.editors[self.keys[index]])
             del(self.keys[index])
             del(self.total_times[index])
+
 
 class OperatingSystemsStats(Stats):
     '''Aliluokka, joka sisältää tiedot eri käyttöjärjestelmille.'''
@@ -425,6 +429,7 @@ class OperatingSystemsStats(Stats):
             del(self.keys[index])
             del(self.total_times[index])
 
+
 #Piirretään kuvaajat
 def draw_graph(days, keys, datasets, colors_file_path):
 
@@ -445,6 +450,7 @@ def draw_graph(days, keys, datasets, colors_file_path):
     fig.update_xaxes(showline=True, linewidth=1, linecolor="black", mirror=True)
     fig.update_yaxes(showline=True, linewidth=1, linecolor="black", mirror=True)
     fig.show()
+
 
 #Piirretään ympyrädiagrammi
 def draw_pie_chart(keys, total_times, colors_file_path):
@@ -481,6 +487,7 @@ def draw_pie_chart(keys, total_times, colors_file_path):
     fig = px.pie(names=labels, values=total_times, color_discrete_sequence=colors)
     fig.update_traces(marker=dict(line=dict(color="black", width=0.5)), textinfo="none", hovertemplate=labels)
     fig.show()
+
 
 #Varsinainen ohjelma
 if __name__ == "__main__":

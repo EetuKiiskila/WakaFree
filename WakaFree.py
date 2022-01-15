@@ -4,9 +4,9 @@ import json
 import yaml
 from datetime import datetime
 import numpy as np
-import plotly.graph_objects as go
 import plotly.express as px
 import GraphicalUserInterface
+import Plotting
 
 
 def string_to_date(date_string):
@@ -42,7 +42,76 @@ def initialize_argument_parser():
     parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
     parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
 
-    return  parser
+    return parser
+
+
+def fetch_dates_and_labels(wakatime_json,
+                           start_date,
+                           end_date, dates,
+                           languages=None,
+                           editors=None,
+                           operating_systems=None,
+                           ignored_stats=[],
+                           searched_stats=[]):
+    """Read dates in given file.
+
+    :param wakatime_json: Stats from WakaTime.
+    :param start_date: Start date to ignore dates before.
+    :param end_date: End date to ignore dates after.
+    :param dates: List to store dates in.
+    :param languages: List to store labels of languages in.
+    :param editors: List to store labels of editors in.
+    :param operating_systems: List to store labels of operating systems in.
+    """
+    for day in wakatime_json["days"]:
+        # Skip day if not in given range
+        if day["date"] < str(start_date) or day["date"] > str(end_date):
+            continue
+        else:
+            # Add date to the list of dates
+            dates.append(day["date"])
+
+            # Add language labels to the list of languages
+            if languages is not None:
+                for language in day["languages"]:
+                    if len(searched_stats) == 0:
+                        if language["name"] in ignored_stats:
+                            continue
+                        elif language["name"] not in languages:
+                            languages[language["name"]] = []
+                    else:
+                        if language["name"] not in searched_stats:
+                            continue
+                        elif language["name"] not in languages:
+                            languages[language["name"]] = []
+
+            # Add editor labels to the list of editors
+            if editors is not None:
+                for editor in day["editors"]:
+                    if len(searched_stats) == 0:
+                        if editor["name"] in ignored_stats:
+                            continue
+                        elif editor["name"] not in editors:
+                            editors[editor["name"]] = []
+                    else:
+                        if editor["name"] not in searched_stats:
+                            continue
+                        elif editor["name"] not in editors:
+                            editors[editor["name"]] = []
+
+            # Add operating system labels to the list of operating systems
+            if operating_systems is not None:
+                for operating_system in day["operating_systems"]:
+                    if len(searched_stats) == 0:
+                        if operating_system["name"] in ignored_stats:
+                            continue
+                        elif operating_system["name"] not in operating_systems:
+                            operating_systems[operating_system["name"]] = []
+                    else:
+                        if operating_system["name"] not in searched_stats:
+                            continue
+                        elif operating_system["name"] not in operating_systems:
+                            operating_systems[operating_system["name"]] = []
 
 
 class Stats:
@@ -72,7 +141,7 @@ class Stats:
                 continue
             elif day["date"] > str(end_date):
                 continue
-            
+
             #Päivämäärät
             days.append(day["date"])
 
@@ -89,7 +158,7 @@ class Stats:
                             continue
                         elif language["name"] not in languages:
                             languages[language["name"]] = []
-        
+
             #Editorit
             if editors is not None:
                 for editor in day["editors"]:
@@ -464,28 +533,6 @@ class OperatingSystemsStats(Stats):
             del(self.total_times[index])
 
 
-#Piirretään kuvaajat
-def draw_graph(days, keys, datasets, colors_file_path):
-
-    with open(colors_file_path, "r") as colors_file:
-
-        colors_data = yaml.safe_load(colors_file)
-
-        fig = go.Figure()
-
-        #Käydään läpi kaikki tiedot
-        for key in keys:
-            try:
-                fig.add_trace(go.Scatter(x=days, y=datasets[key], mode="lines", name=key, marker=dict(color=colors_data[key]["color"])))
-            except Exception:
-                fig.add_trace(go.Scatter(x=days, y=datasets[key], mode="lines", name=key, marker=dict(color=colors_data["Other"]["color"])))
-
-    fig.update_layout(yaxis_title="t (h)", plot_bgcolor="white")
-    fig.update_xaxes(showline=True, linewidth=1, linecolor="black", mirror=True)
-    fig.update_yaxes(showline=True, linewidth=1, linecolor="black", mirror=True)
-    fig.show()
-
-
 #Piirretään ympyrädiagrammi
 def draw_pie_chart(keys, total_times, colors_file_path):
 
@@ -546,6 +593,8 @@ def main():
     if args.gui:
         file_name, graphs, totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
             = GraphicalUserInterface.initialize_gui()
+
+    days = []
 
 
 #Varsinainen ohjelma
@@ -619,15 +668,15 @@ if __name__ == "__main__":
 
                 #Kielten kuvaajat
                 if "l" in graphs.lower():
-                    draw_graph(Stats.days, languages.keys, languages.languages, os.path.join(project_directory, "Colors/languages_colors.yml"))
+                    Plotting.draw_graphs(Stats.days, languages.keys, languages.languages, "languages")
 
                 #Editorien kuvaajat
                 if "e" in graphs.lower():
-                    draw_graph(Stats.days, editors.keys, editors.editors, os.path.join(project_directory, "Colors/editors_colors.yml"))
+                    Plotting.draw_graphs(Stats.days, editors.keys, editors.editors, "editors")
 
                 #Käyttöjärjestelmien kuvaajat
                 if "o" in graphs.lower():
-                    draw_graph(Stats.days, operating_systems.keys, operating_systems.operating_systems, os.path.join(project_directory, "Colors/operating_systems_colors.yml"))
+                    Plotting.draw_graphs(Stats.days, operating_systems.keys, operating_systems.operating_systems, "operating_systems")
 
             #Jos käyttäjä haluaa näyttää kokonaisajat
             if totals != "" or (graphs == "" and totals == ""):

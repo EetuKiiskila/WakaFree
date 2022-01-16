@@ -1,11 +1,29 @@
-import os.path
 import argparse
 import json
-import yaml
-from datetime import datetime
+import datetime
+from dataclasses import dataclass
+
 import numpy as np
+
 import GraphicalUserInterface
 import Plotting
+
+
+@dataclass
+class Stats:
+    type_: str
+    daily_stats: dict
+    keys: list
+    total_times: list
+
+
+def seconds_to_hours(seconds):
+    """Convert seconds to hours
+
+    :param seconds: Time in seconds.
+    :return: Time in hours.
+    """
+    return seconds / 3600
 
 
 def string_to_date(date_string):
@@ -14,7 +32,7 @@ def string_to_date(date_string):
     :param date_string: Date string in format YYYY-MM-DD.
     :return: Date as a datetime date.
     """
-    return datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
+    return datetime.datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
 
 
 def initialize_argument_parser():
@@ -46,10 +64,11 @@ def initialize_argument_parser():
 
 def fetch_dates_and_labels(wakatime_json,
                            start_date,
-                           end_date, dates,
-                           languages=None,
-                           editors=None,
-                           operating_systems=None,
+                           end_date,
+                           dates,
+                           languages_stats=None,
+                           editors_stats=None,
+                           operating_systems_stats=None,
                            ignored_stats=[],
                            searched_stats=[]):
     """Read dates in given file.
@@ -58,9 +77,11 @@ def fetch_dates_and_labels(wakatime_json,
     :param start_date: Start date to ignore dates before.
     :param end_date: End date to ignore dates after.
     :param dates: List to store dates in.
-    :param languages: List to store labels of languages in.
-    :param editors: List to store labels of editors in.
-    :param operating_systems: List to store labels of operating systems in.
+    :param languages_stats: Dict to create lists for stats in with languages as keys.
+    :param editors_stats: Dict to create lists for stats in with editors as keys.
+    :param operating_systems_stats: Dict to create lists for stats in with operating systems as keys.
+    :param ignored_stats: List of labels to ignore.
+    :param searched_stats: List of labels to search for.
     """
     for day in wakatime_json["days"]:
         # Skip day if not in given range
@@ -71,465 +92,165 @@ def fetch_dates_and_labels(wakatime_json,
             dates.append(day["date"])
 
             # Add language labels to the list of languages
-            if languages is not None:
+            if languages_stats is not None:
                 for language in day["languages"]:
                     if len(searched_stats) == 0:
                         if language["name"] in ignored_stats:
                             continue
-                        elif language["name"] not in languages:
-                            languages[language["name"]] = []
+                        elif language["name"] not in languages_stats.daily_stats:
+                            languages_stats.daily_stats[language["name"]] = []
                     else:
                         if language["name"] not in searched_stats:
                             continue
-                        elif language["name"] not in languages:
-                            languages[language["name"]] = []
+                        elif language["name"] not in languages_stats.daily_stats:
+                            languages_stats.daily_stats[language["name"]] = []
 
             # Add editor labels to the list of editors
-            if editors is not None:
+            if editors_stats is not None:
                 for editor in day["editors"]:
                     if len(searched_stats) == 0:
                         if editor["name"] in ignored_stats:
                             continue
-                        elif editor["name"] not in editors:
-                            editors[editor["name"]] = []
+                        elif editor["name"] not in editors_stats.daily_stats:
+                            editors_stats.daily_stats[editor["name"]] = []
                     else:
                         if editor["name"] not in searched_stats:
                             continue
-                        elif editor["name"] not in editors:
-                            editors[editor["name"]] = []
+                        elif editor["name"] not in editors_stats.daily_stats:
+                            editors_stats.daily_stats[editor["name"]] = []
 
             # Add operating system labels to the list of operating systems
-            if operating_systems is not None:
+            if operating_systems_stats is not None:
                 for operating_system in day["operating_systems"]:
                     if len(searched_stats) == 0:
                         if operating_system["name"] in ignored_stats:
                             continue
-                        elif operating_system["name"] not in operating_systems:
-                            operating_systems[operating_system["name"]] = []
+                        elif operating_system["name"] not in operating_systems_stats.daily_stats:
+                            operating_systems_stats.daily_stats[operating_system["name"]] = []
                     else:
                         if operating_system["name"] not in searched_stats:
                             continue
-                        elif operating_system["name"] not in operating_systems:
-                            operating_systems[operating_system["name"]] = []
-
-
-class Stats:
-    """Class that contains stats and methods for modifying them."""
-    days = []
-
-    @classmethod
-    def convert_dates(cls, days=days):
-        '''Muuntaa merkkijonoina olevat päivämäärät oikean tyyppisiksi.'''
-        for index, day in enumerate(days):
-            days[index] = string_to_date(day)
-
-    @staticmethod
-    def seconds_to_hours(seconds):
-        '''Muuntaa parametrina annetut sekunnit tunneiksi.'''
-        hours = seconds / 3600
-        return hours
-
-    @staticmethod
-    def fetch_days_and_labels(data, days=days, languages=None, editors=None, operating_systems=None, ignored_stats=[], searched_stats=[]):
-        '''Lisää päivät listaan ja avaimet haluttuihin hakurakenteisiin.'''
-        #Käydään läpi kaikki päivät
-        for day in data["days"]:
-
-            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
-            if day["date"] < str(start_date):
-                continue
-            elif day["date"] > str(end_date):
-                continue
-
-            #Päivämäärät
-            days.append(day["date"])
-
-            #Kielet
-            if languages is not None:
-                for language in day["languages"]:
-                    if len(searched_stats) == 0:
-                        if language["name"] in ignored_stats:
-                            continue
-                        elif language["name"] not in languages:
-                            languages[language["name"]] = []
-                    else:
-                        if language["name"] not in searched_stats:
-                            continue
-                        elif language["name"] not in languages:
-                            languages[language["name"]] = []
-
-            #Editorit
-            if editors is not None:
-                for editor in day["editors"]:
-                    if len(searched_stats) == 0:
-                        if editor["name"] in ignored_stats:
-                            continue
-                        elif editor["name"] not in editors:
-                            editors[editor["name"]] = []
-                    else:
-                        if editor["name"] not in searched_stats:
-                            continue
-                        elif editor["name"] not in editors:
-                            editors[editor["name"]] = []
-
-            #Käyttöjärjestelmät
-            if operating_systems is not None:
-                for operating_system in day["operating_systems"]:
-                    if len(searched_stats) == 0:
-                        if operating_system["name"] in ignored_stats:
-                            continue
-                        elif operating_system["name"] not in operating_systems:
-                            operating_systems[operating_system["name"]] = []
-                    else:
-                        if operating_system["name"] not in searched_stats:
-                            continue
-                        elif operating_system["name"] not in operating_systems:
-                            operating_systems[operating_system["name"]] = []
-
-
-class LanguagesStats(Stats):
-    '''Aliluokka, joka sisältää tiedot eri ohjelmointikielistä.'''
-    def __init__(self):
-        self.languages = {}
-        self.keys = []
-        self.total_times = []
-
-    def populate_stats(self, data):
-        '''Lisää kielten tiedot hakurakenteeseen.
-
-        Parametrit:
-
-            data -- JSON-tiedostosta luetut tiedot.
-        '''
-        #Kuinka monen päivän tiedot on lisätty kieliin
-        number_of_days = 0
-
-        #Käydään läpi kaikki päivät
-        for day in data["days"]:
-
-            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
-            if day["date"] < str(start_date):
-                continue
-            elif day["date"] > str(end_date):
-                continue
-
-            number_of_days += 1
-
-            #Jos päivälle ei löydy tietoja kielistä
-            if len(day["languages"]) == 0:
-
-                #Lisätään kaikkiin ohjelmointikieliin nolla tuntia kyseiselle päivälle
-                for language in self.languages:
-                    self.languages[language].append(0.0)
-
-            #Jos päivälle löytyy tietoja kielistä
-            else:
-
-                #Käydään läpi kaikki kielet
-                for language in day["languages"]:
-
-                    #Ohitetaan kieli käyttäjän halutessa
-                    if len(searched_stats) == 0:
-                        if language["name"] in ignored_stats:
-                            continue
-                    else:
-                        if language["name"] not in searched_stats:
-                            continue
-
-                    #Lisätään kieleen kyseisen päivän tiedot tunneiksi muutettuna
-                    self.languages[language["name"]].append(Stats.seconds_to_hours(language["total_seconds"]))
-
-            #Käydään läpi kaikki kielet
-            for language in self.languages:
-
-                #Jos kielen tiedoista puuttuu päivä, lisätään nolla tuntia kyseiselle päivälle
-                if len(self.languages[language]) < number_of_days:
-                    self.languages[language].append(0.0)
-
-    def sort_stats_and_populate_keys(self):
-        '''Järjestää tiedot eniten käytetystä vähiten käytettyyn ja täyttää avaimet oikeassa järjestyksessä.'''
-        total_hours = 0
-
-        #Käydään läpi kielet
-        for language in self.languages:
-
-            #Lasketaan kielen päivittäiset ajat yhteen
-            hours = sum(self.languages[language])
-
-            #Lisätään aika kokonaisaikaan
-            total_hours += hours
-
-            #Lisätään kokonaisaika ja avain listoihin
-            self.total_times.append(hours)
-            self.keys.append(language)
-
-        if minimum_labeling_percentage != 0.0:
-            self.unify_stats()
-
-        #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
-        self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
-
-    def unify_stats(self):
-        '''Yhdistää tiedot otsikon Other alle tietyn raja-arvon mukaisesti.'''
-        removed_at_indexes = []
-
-        #Lisätään tarvittaessa otsikko Other
-        if "Other" not in self.keys:
-            self.keys.append("Other")
-            self.total_times.append(0.0)
-            self.languages["Other"] = [0.0 for value in self.languages[self.keys[0]]]
-
-        #Lisätään raja-arvon alittavat osuudet Otheriin
-        for index, total_time in enumerate(self.total_times):
-            if self.keys[index] == "Other":
-                continue
-            elif total_time / sum(self.total_times) * 100.0 < minimum_labeling_percentage:
-                self.languages["Other"] = np.add(self.languages["Other"], self.languages[self.keys[index]]).tolist()
-                self.total_times[self.keys.index("Other")] += self.total_times[index]
-                removed_at_indexes.append(index)
-
-        #Poistetaan Other-otsikko ja sen tiedot, jos se on turha, ja poistutaan metodista
-        if len(removed_at_indexes) == 0:
-            del(self.total_times[self.keys.index("Other")])
-            del(self.languages["Other"])
-            self.keys.remove("Other")
-            return
-
-        #Poistetaan Otheriin yhdistettyjen tietojen päivittäiset tiedot, otsikot ja kokonaisajat
-        for index in reversed(removed_at_indexes):
-            del(self.languages[self.keys[index]])
-            del(self.keys[index])
-            del(self.total_times[index])
-
-
-class EditorsStats(Stats):
-    '''Aliluokka, joka sisältää tiedot eri editoreille.'''
-    def __init__(self):
-        self.editors = {}
-        self.keys = []
-        self.total_times = []
-
-    def populate_stats(self, data):
-        '''Lisää editorien tiedot hakurakenteeseen.
-
-        Parametrit:
-
-            data -- JSON-tiedostosta luetut tiedot.
-        '''
-        #Kuinka monen päivän tiedot on lisätty editoreihin
-        number_of_days = 0
-
-        #Käydään läpi kaikki päivät
-        for day in data["days"]:
-
-            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
-            if day["date"] < str(start_date):
-                continue
-            elif day["date"] > str(end_date):
-                continue
-
-            number_of_days += 1
-
-            #Jos päivälle ei löydy tietoja editoreista
-            if len(day["editors"]) == 0:
-
-                #Lisätään kaikkiin editoreihin nolla tuntia kyseiselle päivälle
-                for editor in self.editors:
-                    self.editors[editor].append(0.0)
-
-            #Jos päivälle löytyy tietoja editoreista
-            else:
-
-                #Käydään läpi kaikki editorit
-                for editor in day["editors"]:
-
-                    #Ohitetaan editori käyttäjän halutessa
-                    if len(searched_stats) == 0:
-                        if editor["name"] in ignored_stats:
-                            continue
-                    else:
-                        if editor["name"] not in searched_stats:
-                            continue
-
-                    #Lisätään editoriin kyseisen päivän tiedot tunneiksi muutettuna
-                    self.editors[editor["name"]].append(Stats.seconds_to_hours(editor["total_seconds"]))
-
-            #Käydään läpi kaikki editorit
-            for editor in self.editors:
-
-                #Jos editorin tiedoista puuttuu päivä, lisätään nolla tuntia kyseiselle päivälle
-                if len(self.editors[editor]) < number_of_days:
-                    self.editors[editor].append(0.0)
-
-    def sort_stats_and_populate_keys(self):
-        '''Järjestää tiedot eniten käytetystä vähiten käytettyyn ja täyttää avaimet oikeassa järjestyksessä.'''
-        total_hours = 0
-
-        #Käydään läpi editorit
-        for editor in self.editors:
-
-            #Lasketaan editorin päivittäiset ajat yhteen
-            hours = sum(self.editors[editor])
-
-            #Lisätään aika kokonaisaikaan
-            total_hours += hours
-
-            #Lisätään kokonaisaika ja avain listoihin
-            self.total_times.append(hours)
-            self.keys.append(editor)
-
-        if minimum_labeling_percentage != 0.0:
-            self.unify_stats()
-
-        #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
-        self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
-
-    def unify_stats(self):
-        '''Yhdistää tiedot otsikon Other alle tietyn raja-arvon mukaisesti.'''
-        removed_at_indexes = []
-
-        #Lisätään tarvittaessa otsikko Other
-        if "Other" not in self.keys:
-            self.keys.append("Other")
-            self.total_times.append(0.0)
-            self.editors["Other"] = [0.0 for value in self.editors[self.keys[0]]]
-
-        #Lisätään raja-arvon alittavat osuudet Otheriin
-        for index, total_time in enumerate(self.total_times):
-            if self.keys[index] == "Other":
-                continue
-            elif total_time / sum(self.total_times) * 100.0 < minimum_labeling_percentage:
-                self.editors["Other"] = np.add(self.editors["Other"], self.editors[self.keys[index]]).tolist()
-                self.total_times[self.keys.index("Other")] += self.total_times[index]
-                removed_at_indexes.append(index)
-
-        #Poistetaan Other-otsikko ja sen tiedot, jos se on turha, ja poistutaan metodista
-        if len(removed_at_indexes) == 0:
-            del(self.total_times[self.keys.index("Other")])
-            del(self.editors["Other"])
-            self.keys.remove("Other")
-            return
-
-        #Poistetaan Otheriin yhdistettyjen tietojen päivittäiset tiedot, otsikot ja kokonaisajat
-        for index in reversed(removed_at_indexes):
-            del(self.editors[self.keys[index]])
-            del(self.keys[index])
-            del(self.total_times[index])
-
-
-class OperatingSystemsStats(Stats):
-    '''Aliluokka, joka sisältää tiedot eri käyttöjärjestelmille.'''
-    def __init__(self):
-        self.operating_systems = {}
-        self.keys = []
-        self.total_times = []
-
-    def populate_stats(self, data):
-        '''Lisää käyttöjärjestelmien tiedot hakurakenteeseen.
-
-        Parametrit:
-
-            data -- JSON-tiedostosta luetut tiedot.
-        '''
-        #Kuinka monen päivän tiedot on lisätty käyttöjärjestelmiin
-        number_of_days = 0
-
-        #Käydään läpi kaikki päivät
-        for day in data["days"]:
-
-            #Ohitetaan päivä käyttäjän antamista argumenteista riippuen
-            if day["date"] < str(start_date):
-                continue
-            elif day["date"] > str(end_date):
-                continue
-
-            number_of_days += 1
-
-            #Jos päivälle ei löydy tietoja käyttöjärjestelmistä
-            if len(day["operating_systems"]) == 0:
-
-                #Lisätään kaikkiin käyttöjärjestelmiin nolla tuntia kyseiselle päivälle 
-                for operating_system in self.operating_systems:
-                    self.operating_systems[operating_system].append(0.0)
-
-            #Jos päivälle löytyy tietoja käyttöjärjestelmistä
-            else:
-
-                #Käydään läpi kaikki käyttöjärjestelmät
-                for operating_system in day["operating_systems"]:
-
-                    #Ohitetaan käyttöjärjestelmä käyttäjän halutessa
-                    if len(searched_stats) == 0:
-                        if operating_system["name"] in ignored_stats:
-                            continue
-                    else:
-                        if operating_system["name"] not in searched_stats:
-                            continue
-
-                    #Lisätään käyttöjärjestelmään kyseisen päivän tiedot tunneiksi muutettuna
-                    self.operating_systems[operating_system["name"]].append(Stats.seconds_to_hours(operating_system["total_seconds"]))
-
-            #Käydään läpi kaikki käyttöjärjestelmät
-            for operating_system in self.operating_systems:
-
-                #Jos käyttöjärjestelmän tiedoista puuttuu päivä, lisätään nolla tuntia kyseiselle päivälle
-                if len(self.operating_systems[operating_system]) < number_of_days:
-                    self.operating_systems[operating_system].append(0.0)
-
-    def sort_stats_and_populate_keys(self):
-        '''Järjestää tiedot eniten käytetystä vähiten käytettyyn ja täyttää avaimet oikeassa järjestyksessä.'''
-        total_hours = 0
-
-        #Käydään läpi käyttöjärjestelmät
-        for operating_system in self.operating_systems:
-
-            #Lasketaan käyttöjärjestelmän päivittäiset ajat yhteen
-            hours = sum(self.operating_systems[operating_system])
-
-            #Lisätään aika kokonaisaikaan
-            total_hours += hours
-
-            #Lisätään kokonaisaika ja avain listoihin
-            self.total_times.append(hours)
-            self.keys.append(operating_system)
-
-        if minimum_labeling_percentage != 0.0:
-            self.unify_stats()
-
-        #Muutetaan järjestys eniten käytetystä vähiten käytettyyn, muuttuvat tupleiksi
-        self.total_times, self.keys = zip(*sorted(zip(self.total_times, self.keys), reverse=True))
-
-    def unify_stats(self):
-        '''Yhdistää tiedot otsikon Other alle tietyn raja-arvon mukaisesti.'''
-        removed_at_indexes = []
-
-        #Lisätään tarvittaessa otsikko Other
-        if "Other" not in self.keys:
-            self.keys.append("Other")
-            self.total_times.append(0.0)
-            self.operating_systems["Other"] = [0.0 for value in self.operating_systems[self.keys[0]]]
-
-        #Lisätään raja-arvon alittavat osuudet Otheriin
-        for index, total_time in enumerate(self.total_times):
-            if self.keys[index] == "Other":
-                continue
-            elif total_time / sum(self.total_times) * 100.0 < minimum_labeling_percentage:
-                self.operating_systems["Other"] = np.add(self.operating_systems["Other"], self.operating_systems[self.keys[index]]).tolist()
-                self.total_times[self.keys.index("Other")] += self.total_times[index]
-                removed_at_indexes.append(index)
-
-        #Poistetaan Other-otsikko ja sen tiedot, jos se on turha, ja poistutaan metodista
-        if len(removed_at_indexes) == 0:
-            del(self.total_times[self.keys.index("Other")])
-            del(self.operating_systems["Other"])
-            self.keys.remove("Other")
-            return
-
-        #Poistetaan Otheriin yhdistettyjen tietojen päivittäiset tiedot, otsikot ja kokonaisajat
-        for index in reversed(removed_at_indexes):
-            del(self.operating_systems[self.keys[index]])
-            del(self.keys[index])
-            del(self.total_times[index])
+                        elif operating_system["name"] not in operating_systems_stats.daily_stats:
+                            operating_systems_stats.daily_stats[operating_system["name"]] = []
+
+
+def populate_stats(wakatime_json, start_date, end_date, stats, ignored_stats=[], searched_stats=[]):
+    """Read daily stats in given file for operating systems.
+
+    :param wakatime_json: Stats from WakaTime.
+    :param start_date: Start date to ignore dates before.
+    :param end_date: End date to ignore dates after.
+    :param stats: Object of type Stats.
+    :param ignored_stats: List of labels to ignore.
+    :param searched_stats: List of labels to search for.
+    """
+
+    # How many days have been processed
+    number_of_days = 0
+
+    # Loop through all days
+    for day in wakatime_json["days"]:
+        # Skip day depending on start and end dates
+        if day["date"] < str(start_date):
+            continue
+        elif day["date"] > str(end_date):
+            continue
+
+        # Increment how many days have been processed
+        number_of_days += 1
+
+        # No stats of specified type for the day
+        if len(day[stats.type_]) == 0:
+            # Add 0 hours to all labels for the day
+            for label in stats.daily_stats:
+                stats.daily_stats[label].append(0.0)
+
+        # Stats of specified type exist for the day
+        else:
+            # Loop through labels
+            for label in day[stats.type_]:
+                # Skip the label depending on user input
+                if len(searched_stats) == 0:
+                    if label["name"] in ignored_stats:
+                        continue
+                else:
+                    if label["name"] not in searched_stats:
+                        continue
+
+                # Add label's stats for the day converted to hours
+                stats.daily_stats[label["name"]]\
+                    .append(seconds_to_hours(label["total_seconds"]))
+
+        # Loop through labels
+        for label in stats.daily_stats:
+            # If the label has no stats for the day add 0 hours
+            if len(stats.daily_stats[label]) < number_of_days:
+                stats.daily_stats[label].append(0.0)
+
+
+def unify_stats(stats, minimum_labeling_percentage):
+    """Group stats under the label Other.
+
+    :param stats: Object of type stats.
+    :param minimum_labeling_percentage: Anything less than this percentage will be moved under the label Other.
+    """
+    removed_at_indexes = []
+
+    # Add label other if not already present
+    if "Other" not in stats.keys:
+        stats.keys.append("Other")
+        stats.total_times.append(0.0)
+        stats.daily_stats["Other"] = [0.0 for value in stats.daily_stats[stats.keys[0]]]
+
+    # Move stats with low percentage under the label Other
+    for index, total_time in enumerate(stats.total_times):
+        if stats.keys[index] == "Other":
+            continue
+        elif total_time / sum(stats.total_times) * 100.0 < minimum_labeling_percentage:
+            stats.daily_stats["Other"] = np.add(stats.daily_stats["Other"], stats.daily_stats[stats.keys[index]]).tolist()
+            stats.total_times[stats.keys.index("Other")] += stats.total_times[index]
+            removed_at_indexes.append(index)
+
+    # Remove the label Other if it is not used
+    if len(removed_at_indexes) == 0:
+        del (stats.total_times[stats.keys.index("Other")])
+        del (stats.total_times["Other"])
+        stats.keys.remove("Other")
+        return
+
+    # Remove duplicate stats of labels moved to Other
+    for index in reversed(removed_at_indexes):
+        del(stats.daily_stats[stats.keys[index]])
+        del(stats.keys[index])
+        del(stats.total_times[index])
+
+
+def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
+    """Sort the stats from most common to least common.
+
+    :param stats: Object of type Stats.
+    :param minimum_labeling_percentage: Stats are moved under the label Other according to this percentage.
+    """
+    total_hours = 0
+
+    # Loop through labels
+    for label in stats.daily_stats:
+        # Total times for each label
+        hours = sum(stats.daily_stats[label])
+
+        # Add to total time of all labels
+        total_hours += hours
+
+        # Add to total times and keys of the label
+        stats.total_times.append(hours)
+        stats.keys.append(label)
+
+    # Unify stats according to user input
+    if minimum_labeling_percentage != 0.0:
+        unify_stats(stats, minimum_labeling_percentage)
+
+    # Reorder from most used to least used
+    stats.total_times, stats.keys = zip(*sorted(zip(stats.total_times, stats.keys), reverse=True))
 
 
 def main():
@@ -544,118 +265,104 @@ def main():
     ignored_stats = args.ignore.split(",") if args.ignore else []
     searched_stats = args.search.split(",") if args.search else []
     minimum_labeling_percentage = float(args.minimum_labeling_percentage) if args.minimum_labeling_percentage else 0.0
-    start_date = datetime(int(args.start_date[0:4]),
+    start_date = datetime.datetime(int(args.start_date[0:4]),
                           int(args.start_date[5:7]),
-                          int(args.start_date[8:10])).date() if args.start_date else datetime(1, 1, 1).date()
-    end_date = datetime(int(args.end_date[0:4]),
+                          int(args.start_date[8:10])).date() if args.start_date else datetime.datetime(1, 1, 1).date()
+    end_date = datetime.datetime(int(args.end_date[0:4]),
                         int(args.end_date[5:7]),
-                        int(args.end_date[8:10])).date() if args.end_date else datetime(9999, 12, 31).date()
+                        int(args.end_date[8:10])).date() if args.end_date else datetime.datetime(9999, 12, 31).date()
 
     # Read values with GUI if user wants to
     if args.gui:
         file_name, graphs, totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
             = GraphicalUserInterface.initialize_gui()
 
-    days = []
+    dates = []
 
+    languages_stats = Stats("languages", {}, [], [])
+    editors_stats = Stats("editors", {}, [], [])
+    operating_systems_stats = Stats("operating_systems", {}, [], [])
 
-#Varsinainen ohjelma
-if __name__ == "__main__":
-
-    #Valmistellaan argumenttien lukeminen
-    parser = initialize_argument_parser()
-
-    #Luetaan argumentit
-    args = parser.parse_args()
-    file_name = args.file if args.file else ""
-    graphs = args.graphs if args.graphs else ""
-    totals = args.totals if args.totals else ""
-    ignored_stats = args.ignore.split(",") if args.ignore else []
-    searched_stats = args.search.split(",") if args.search else []
-    minimum_labeling_percentage = float(args.minimum_labeling_percentage) if args.minimum_labeling_percentage else 0.0
-    start_date = datetime(int(args.start_date[0:4]), int(args.start_date[5:7]), int(args.start_date[8:10])).date() if args.start_date else datetime(1, 1, 1).date()
-    end_date = datetime(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10])).date() if args.end_date else datetime(9999, 12, 31).date()
-
-    #Jos käyttäjä haluaa graafisen käyttöliittymän
-    if args.gui:
-        file_name, graphs, totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
-            = GraphicalUserInterface.initialize_gui()
-
-    #Jos käyttäjä ei antanut kumpaakaan valinnaista argumenttia piirtämiseen
-    if graphs == "" and totals == "":
-        graphs = "leo"
-        totals = "leo"
-
-    #Jos käyttäjä antaa tiedoston
+    # User specified a file
     if file_name != "":
-
-        #Avataan tiedosto
         with open(file_name, "r") as file:
-
-            #Projektin hakemisto
-            project_directory = os.path.dirname(__file__)
-
-            #Luodaan oliot tietoja varten
-            languages = LanguagesStats()
-            editors = EditorsStats()
-            operating_systems = OperatingSystemsStats()
-
-            #Haetaan tiedot
             data = json.load(file)
 
-            #Valmistellaan tietojen lukeminen
-            Stats.fetch_days_and_labels(
-                data,
-                languages=languages.languages if "l" in (graphs + totals).lower() else None,
-                editors=editors.editors if "e" in (graphs + totals).lower() else None,
-                operating_systems=operating_systems.operating_systems if "o" in (graphs + totals).lower() else None,
-                ignored_stats=ignored_stats, searched_stats=searched_stats)
+            # Read dates and labels
+            fetch_dates_and_labels(data,
+                                   start_date,
+                                   end_date,
+                                   dates,
+                                   languages_stats
+                                   =languages_stats if "l" in (graphs + totals).lower() else None,
+                                   editors_stats
+                                   =editors_stats if "e" in (graphs + totals).lower() else None,
+                                   operating_systems_stats
+                                   =operating_systems_stats if "o" in (graphs + totals).lower() else None,
+                                   ignored_stats=ignored_stats,
+                                   searched_stats=searched_stats)
 
-            #Muunnetaan päivämäärät oikeaan muotoon
-            Stats.convert_dates()
+            # Covert strings to dates
+            for index, date in enumerate(dates):
+                dates[index] = string_to_date(date)
 
-            #Haetaan halutut tiedot
-            if "l" in (graphs + totals).lower():
-                languages.populate_stats(data)
-                languages.sort_stats_and_populate_keys()
-            if "e" in (graphs + totals).lower():
-                editors.populate_stats(data)
-                editors.sort_stats_and_populate_keys()
+            # Read and sort data
             if "o" in (graphs + totals).lower():
-                operating_systems.populate_stats(data)
-                operating_systems.sort_stats_and_populate_keys()
+                # Languages
+                populate_stats(data, start_date, end_date, languages_stats, ignored_stats, searched_stats)
+                sort_stats_and_populate_keys(languages_stats, minimum_labeling_percentage)
 
-            #Jos käyttäjä haluaa piirtää kuvaajat
+                #Editors
+                populate_stats(data, start_date, end_date, editors_stats, ignored_stats, searched_stats)
+                sort_stats_and_populate_keys(editors_stats, minimum_labeling_percentage)
+
+                # Operating systems
+                populate_stats(data, start_date, end_date, operating_systems_stats, ignored_stats, searched_stats)
+                sort_stats_and_populate_keys(operating_systems_stats, minimum_labeling_percentage)
+
+            # User wants to show daily stats
             if graphs != "" or (graphs == "" and totals == ""):
-
-                #Kielten kuvaajat
+                # Languages graphs
                 if "l" in graphs.lower():
-                    Plotting.draw_graphs(Stats.days, languages.keys, languages.languages, "languages")
+                    Plotting.draw_graphs(dates, languages_stats.keys, languages_stats.daily_stats, "languages")
 
-                #Editorien kuvaajat
+                # Editors graphs
                 if "e" in graphs.lower():
-                    Plotting.draw_graphs(Stats.days, editors.keys, editors.editors, "editors")
+                    Plotting.draw_graphs(dates, editors_stats.keys, editors_stats.daily_stats, "editors")
 
-                #Käyttöjärjestelmien kuvaajat
+                # Operating systems graphs
                 if "o" in graphs.lower():
-                    Plotting.draw_graphs(Stats.days, operating_systems.keys, operating_systems.operating_systems, "operating_systems")
+                    Plotting.draw_graphs(dates,
+                                         operating_systems_stats.keys,
+                                         operating_systems_stats.daily_stats,
+                                         "operating_systems")
 
-            #Jos käyttäjä haluaa näyttää kokonaisajat
+            # User wants to show total times
             if totals != "" or (graphs == "" and totals == ""):
-
-                #Kielten kokonaisajat
+                # Languages total times
                 if "l" in totals.lower():
-                    Plotting.draw_pie_chart(languages.keys, languages.total_times, "languages")
+                    Plotting.draw_pie_chart(languages_stats.keys, languages_stats.total_times, "languages")
 
-                #Editorien kokonaisajat
+                # Editors total times
                 if "e" in totals.lower():
-                    Plotting.draw_pie_chart(editors.keys, editors.total_times, "editors")
+                    Plotting.draw_pie_chart(editors_stats.keys, editors_stats.total_times, "editors")
 
-                #Käyttöjärjestelmien kokonaisajat
+                # Operating systems total times
                 if "o" in totals.lower():
-                    Plotting.draw_pie_chart(operating_systems.keys, operating_systems.total_times, "operating_systems")
+                    Plotting.draw_pie_chart(operating_systems_stats.keys,
+                                            operating_systems_stats.total_times,
+                                            "operating_systems")
 
-    #Jos käyttäjä ei antanut tiedostoa tai mitään vaihtoehtoista argumenttia
+    # User did not specify a file or an optional argument
     else:
         if not args.gui:
-            print("\nYou did not specify what you would like to do. To get help, try using either of the following commands:\n\npython WakaFree.py -h\npython WakaFree.py --help")
+            print("\n"
+                  "You did not specify what you would like to do."
+                  " To get help, try using either of the following commands:\n\n"
+                  "python WakaFree.py -h\n"
+                  "python WakaFree.py --help")
+
+
+# Start main program
+if __name__ == "__main__":
+    main()

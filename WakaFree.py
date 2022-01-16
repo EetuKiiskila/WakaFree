@@ -62,15 +62,30 @@ def initialize_argument_parser():
     return parser
 
 
+def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
+    if stats is not None:
+        for label in day[stats.type_]:
+            if label["name"] in stats.daily_stats:
+                continue
+            if len(searched_stats) == 0:
+                if label["name"] in ignored_stats:
+                    continue
+                stats.daily_stats[label["name"]] = []
+            else:
+                if label["name"] not in searched_stats:
+                    continue
+                stats.daily_stats[label["name"]] = []
+
+
 def fetch_dates_and_labels(wakatime_json,
                            start_date,
                            end_date,
                            dates,
-                           languages_stats=None,
-                           editors_stats=None,
-                           operating_systems_stats=None,
-                           ignored_stats=[],
-                           searched_stats=[]):
+                           languages_stats,
+                           editors_stats,
+                           operating_systems_stats,
+                           searched_stats,
+                           ignored_stats):
     """Read dates in given file.
 
     :param wakatime_json: Stats from WakaTime.
@@ -80,8 +95,8 @@ def fetch_dates_and_labels(wakatime_json,
     :param languages_stats: Dict to create lists for stats in with languages as keys.
     :param editors_stats: Dict to create lists for stats in with editors as keys.
     :param operating_systems_stats: Dict to create lists for stats in with operating systems as keys.
-    :param ignored_stats: List of labels to ignore.
     :param searched_stats: List of labels to search for.
+    :param ignored_stats: List of labels to ignore.
     """
     for day in wakatime_json["days"]:
         # Skip day if not in given range
@@ -93,56 +108,26 @@ def fetch_dates_and_labels(wakatime_json,
 
             # Add language labels to the list of languages
             if languages_stats is not None:
-                for language in day["languages"]:
-                    if len(searched_stats) == 0:
-                        if language["name"] in ignored_stats:
-                            continue
-                        elif language["name"] not in languages_stats.daily_stats:
-                            languages_stats.daily_stats[language["name"]] = []
-                    else:
-                        if language["name"] not in searched_stats:
-                            continue
-                        elif language["name"] not in languages_stats.daily_stats:
-                            languages_stats.daily_stats[language["name"]] = []
+                fetch_labels_of_a_day(day, languages_stats, searched_stats, ignored_stats)
 
             # Add editor labels to the list of editors
             if editors_stats is not None:
-                for editor in day["editors"]:
-                    if len(searched_stats) == 0:
-                        if editor["name"] in ignored_stats:
-                            continue
-                        elif editor["name"] not in editors_stats.daily_stats:
-                            editors_stats.daily_stats[editor["name"]] = []
-                    else:
-                        if editor["name"] not in searched_stats:
-                            continue
-                        elif editor["name"] not in editors_stats.daily_stats:
-                            editors_stats.daily_stats[editor["name"]] = []
+                fetch_labels_of_a_day(day, editors_stats, searched_stats, ignored_stats)
 
             # Add operating system labels to the list of operating systems
             if operating_systems_stats is not None:
-                for operating_system in day["operating_systems"]:
-                    if len(searched_stats) == 0:
-                        if operating_system["name"] in ignored_stats:
-                            continue
-                        elif operating_system["name"] not in operating_systems_stats.daily_stats:
-                            operating_systems_stats.daily_stats[operating_system["name"]] = []
-                    else:
-                        if operating_system["name"] not in searched_stats:
-                            continue
-                        elif operating_system["name"] not in operating_systems_stats.daily_stats:
-                            operating_systems_stats.daily_stats[operating_system["name"]] = []
+                fetch_labels_of_a_day(day, operating_systems_stats, searched_stats, ignored_stats)
 
 
-def populate_stats(wakatime_json, start_date, end_date, stats, ignored_stats=[], searched_stats=[]):
+def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, ignored_stats):
     """Read daily stats in given file for operating systems.
 
     :param wakatime_json: Stats from WakaTime.
     :param start_date: Start date to ignore dates before.
     :param end_date: End date to ignore dates after.
     :param stats: Object of type Stats.
-    :param ignored_stats: List of labels to ignore.
     :param searched_stats: List of labels to search for.
+    :param ignored_stats: List of labels to ignore.
     """
 
     # How many days have been processed
@@ -293,14 +278,11 @@ def main():
                                    start_date,
                                    end_date,
                                    dates,
-                                   languages_stats
-                                   =languages_stats if "l" in (graphs + totals).lower() else None,
-                                   editors_stats
-                                   =editors_stats if "e" in (graphs + totals).lower() else None,
-                                   operating_systems_stats
-                                   =operating_systems_stats if "o" in (graphs + totals).lower() else None,
-                                   ignored_stats=ignored_stats,
-                                   searched_stats=searched_stats)
+                                   languages_stats if "l" in (graphs + totals).lower() else None,
+                                   editors_stats if "e" in (graphs + totals).lower() else None,
+                                   operating_systems_stats if "o" in (graphs + totals).lower() else None,
+                                   searched_stats=searched_stats,
+                                   ignored_stats=ignored_stats)
 
             # Covert strings to dates
             for index, date in enumerate(dates):
@@ -309,15 +291,15 @@ def main():
             # Read and sort data
             if "o" in (graphs + totals).lower():
                 # Languages
-                populate_stats(data, start_date, end_date, languages_stats, ignored_stats, searched_stats)
+                populate_stats(data, start_date, end_date, languages_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(languages_stats, minimum_labeling_percentage)
 
-                #Editors
-                populate_stats(data, start_date, end_date, editors_stats, ignored_stats, searched_stats)
+                # Editors
+                populate_stats(data, start_date, end_date, editors_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(editors_stats, minimum_labeling_percentage)
 
                 # Operating systems
-                populate_stats(data, start_date, end_date, operating_systems_stats, ignored_stats, searched_stats)
+                populate_stats(data, start_date, end_date, operating_systems_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(operating_systems_stats, minimum_labeling_percentage)
 
             # User wants to show daily stats

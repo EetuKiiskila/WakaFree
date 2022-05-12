@@ -205,8 +205,8 @@ def unify_stats(stats, minimum_labeling_percentage):
 
     # Remove the label Other if it is not used
     if len(removed_at_indexes) == 0:
-        del (stats.total_times[stats.keys.index("Other")])
-        del (stats.total_times["Other"])
+        del(stats.total_times[stats.keys.index("Other")])
+        del(stats.daily_stats["Other"])
         stats.keys.remove("Other")
         return
 

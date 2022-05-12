@@ -296,16 +296,13 @@ def main():
                 dates[index] = string_to_date(date)
 
             # Read and sort data
-            if "o" in (graphs + totals).lower():
-                # Languages
+            if "l" in (graphs + totals).lower():
                 populate_stats(data, start_date, end_date, languages_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(languages_stats, minimum_labeling_percentage)
-
-                # Editors
+            if "e" in (graphs + totals).lower():
                 populate_stats(data, start_date, end_date, editors_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(editors_stats, minimum_labeling_percentage)
-
-                # Operating systems
+            if "o" in (graphs + totals).lower():
                 populate_stats(data, start_date, end_date, operating_systems_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(operating_systems_stats, minimum_labeling_percentage)
 

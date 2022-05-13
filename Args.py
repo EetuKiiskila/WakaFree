@@ -5,6 +5,8 @@ parser: argparse.ArgumentParser
 args: argparse.Namespace
 
 file_name: str
+graphs: str
+totals: str
 
 
 def initialize_parser() -> None:
@@ -35,7 +37,11 @@ def parse() -> None:
     """Parse arguments."""
     global args
     global file_name
+    global graphs
+    global totals
 
     args = parser.parse_args()
 
     file_name = args.file if args.file else ""
+    graphs = args.graphs if args.graphs else ""
+    totals = args.totals if args.totals else ""

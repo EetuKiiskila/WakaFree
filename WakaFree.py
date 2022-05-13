@@ -225,8 +225,6 @@ def main():
 
     # Read arguments
     args = Args.args
-    graphs = args.graphs if args.graphs else ""
-    totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
     searched_stats = args.search.split(",") if args.search else []
     minimum_labeling_percentage = float(args.minimum_labeling_percentage) if args.minimum_labeling_percentage else 0.0
@@ -239,7 +237,7 @@ def main():
 
     # Read values with GUI if user wants to
     if args.gui:
-        Args.file_name, graphs, totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
+        Args.file_name, Args.graphs, Args.totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
             = GraphicalUserInterface.initialize_gui()
 
     dates = []
@@ -258,9 +256,9 @@ def main():
                                    start_date,
                                    end_date,
                                    dates,
-                                   languages_stats if "l" in (graphs + totals).lower() else None,
-                                   editors_stats if "e" in (graphs + totals).lower() else None,
-                                   operating_systems_stats if "o" in (graphs + totals).lower() else None,
+                                   languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
+                                   editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
+                                   operating_systems_stats if "o" in (Args.graphs + Args.totals).lower() else None,
                                    searched_stats=searched_stats,
                                    ignored_stats=ignored_stats)
 
@@ -269,45 +267,45 @@ def main():
                 dates[index] = string_to_date(date)
 
             # Read and sort data
-            if "l" in (graphs + totals).lower():
+            if "l" in (Args.graphs + Args.totals).lower():
                 populate_stats(data, start_date, end_date, languages_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(languages_stats, minimum_labeling_percentage)
-            if "e" in (graphs + totals).lower():
+            if "e" in (Args.graphs + Args.totals).lower():
                 populate_stats(data, start_date, end_date, editors_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(editors_stats, minimum_labeling_percentage)
-            if "o" in (graphs + totals).lower():
+            if "o" in (Args.graphs + Args.totals).lower():
                 populate_stats(data, start_date, end_date, operating_systems_stats, searched_stats, ignored_stats)
                 sort_stats_and_populate_keys(operating_systems_stats, minimum_labeling_percentage)
 
             # User wants to show daily stats
-            if graphs != "" or (graphs == "" and totals == ""):
+            if Args.graphs != "" or (Args.graphs == "" and Args.totals == ""):
                 # Languages graphs
-                if "l" in graphs.lower():
+                if "l" in Args.graphs.lower():
                     Plotting.draw_graphs(dates, languages_stats.keys, languages_stats.daily_stats, "languages")
 
                 # Editors graphs
-                if "e" in graphs.lower():
+                if "e" in Args.graphs.lower():
                     Plotting.draw_graphs(dates, editors_stats.keys, editors_stats.daily_stats, "editors")
 
                 # Operating systems graphs
-                if "o" in graphs.lower():
+                if "o" in Args.graphs.lower():
                     Plotting.draw_graphs(dates,
                                          operating_systems_stats.keys,
                                          operating_systems_stats.daily_stats,
                                          "operating_systems")
 
             # User wants to show total times
-            if totals != "" or (graphs == "" and totals == ""):
+            if Args.totals != "" or (Args.graphs == "" and Args.totals == ""):
                 # Languages total times
-                if "l" in totals.lower():
+                if "l" in Args.totals.lower():
                     Plotting.draw_pie_chart(languages_stats.keys, languages_stats.total_times, "languages")
 
                 # Editors total times
-                if "e" in totals.lower():
+                if "e" in Args.totals.lower():
                     Plotting.draw_pie_chart(editors_stats.keys, editors_stats.total_times, "editors")
 
                 # Operating systems total times
-                if "o" in totals.lower():
+                if "o" in Args.totals.lower():
                     Plotting.draw_pie_chart(operating_systems_stats.keys,
                                             operating_systems_stats.total_times,
                                             "operating_systems")

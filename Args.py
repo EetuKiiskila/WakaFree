@@ -1,6 +1,8 @@
 import argparse
 import datetime
 
+import GUI
+
 
 parser: argparse.ArgumentParser
 args: argparse.Namespace
@@ -53,8 +55,10 @@ def parse() -> None:
     global end_date
     global gui
 
+    initialize_parser()
     args = parser.parse_args()
 
+    # Argument values
     file_name = args.file if args.file else ""
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
@@ -66,3 +70,14 @@ def parse() -> None:
     end_date = datetime.date(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10]))\
         if args.end_date else datetime.date(9999, 12, 31)
     gui = True if args.gui else False
+
+    # Read values with GUI if user wants to
+    if gui:
+        (file_name,
+         graphs,
+         totals,
+         ignored_stats,
+         searched_stats,
+         minimum_labeling_percentage,
+         start_date,
+         end_date) = GUI.initialize_gui()

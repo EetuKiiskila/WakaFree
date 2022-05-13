@@ -5,7 +5,6 @@ from dataclasses import dataclass
 import numpy as np
 
 import Args
-import GraphicalUserInterface
 import Plotting
 
 
@@ -220,13 +219,7 @@ def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
 
 def main():
     # Parse arguments
-    Args.initialize_parser()
     Args.parse()
-
-    # Read values with GUI if user wants to
-    if Args.gui:
-        Args.file_name, Args.graphs, Args.totals, Args.ignored_stats, Args.searched_stats, Args.minimum_labeling_percentage, Args.start_date, Args.end_date\
-            = GraphicalUserInterface.initialize_gui()
 
     dates = []
 

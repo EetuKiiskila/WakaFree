@@ -9,6 +9,7 @@ graphs: str
 totals: str
 ignored_stats: list
 searched_stats: list
+minimum_labeling_percentage: float
 
 
 def initialize_parser() -> None:
@@ -43,6 +44,7 @@ def parse() -> None:
     global totals
     global ignored_stats
     global searched_stats
+    global minimum_labeling_percentage
 
     args = parser.parse_args()
 
@@ -51,3 +53,4 @@ def parse() -> None:
     totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
     searched_stats = args.search.split(",") if args.search else []
+    minimum_labeling_percentage = float(args.minimum_labeling_percentage) if args.minimum_labeling_percentage else 0.0

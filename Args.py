@@ -7,6 +7,8 @@ args: argparse.Namespace
 file_name: str
 graphs: str
 totals: str
+ignored_stats: list
+searched_stats: list
 
 
 def initialize_parser() -> None:
@@ -39,9 +41,13 @@ def parse() -> None:
     global file_name
     global graphs
     global totals
+    global ignored_stats
+    global searched_stats
 
     args = parser.parse_args()
 
     file_name = args.file if args.file else ""
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
+    ignored_stats = args.ignore.split(",") if args.ignore else []
+    searched_stats = args.search.split(",") if args.search else []

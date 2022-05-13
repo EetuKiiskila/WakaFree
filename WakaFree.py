@@ -225,8 +225,6 @@ def main():
 
     # Read arguments
     args = Args.args
-    ignored_stats = args.ignore.split(",") if args.ignore else []
-    searched_stats = args.search.split(",") if args.search else []
     minimum_labeling_percentage = float(args.minimum_labeling_percentage) if args.minimum_labeling_percentage else 0.0
     start_date = datetime.datetime(int(args.start_date[0:4]),
                           int(args.start_date[5:7]),
@@ -237,7 +235,7 @@ def main():
 
     # Read values with GUI if user wants to
     if args.gui:
-        Args.file_name, Args.graphs, Args.totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
+        Args.file_name, Args.graphs, Args.totals, Args.ignored_stats, Args.searched_stats, minimum_labeling_percentage, start_date, end_date\
             = GraphicalUserInterface.initialize_gui()
 
     dates = []
@@ -259,8 +257,8 @@ def main():
                                    languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
                                    editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
                                    operating_systems_stats if "o" in (Args.graphs + Args.totals).lower() else None,
-                                   searched_stats=searched_stats,
-                                   ignored_stats=ignored_stats)
+                                   searched_stats=Args.searched_stats,
+                                   ignored_stats=Args.ignored_stats)
 
             # Covert strings to dates
             for index, date in enumerate(dates):
@@ -268,13 +266,13 @@ def main():
 
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, start_date, end_date, languages_stats, searched_stats, ignored_stats)
+                populate_stats(data, start_date, end_date, languages_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(languages_stats, minimum_labeling_percentage)
             if "e" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, start_date, end_date, editors_stats, searched_stats, ignored_stats)
+                populate_stats(data, start_date, end_date, editors_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(editors_stats, minimum_labeling_percentage)
             if "o" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, start_date, end_date, operating_systems_stats, searched_stats, ignored_stats)
+                populate_stats(data, start_date, end_date, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(operating_systems_stats, minimum_labeling_percentage)
 
             # User wants to show daily stats

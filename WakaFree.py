@@ -225,16 +225,10 @@ def main():
 
     # Read arguments
     args = Args.args
-    start_date = datetime.datetime(int(args.start_date[0:4]),
-                          int(args.start_date[5:7]),
-                          int(args.start_date[8:10])).date() if args.start_date else datetime.datetime(1, 1, 1).date()
-    end_date = datetime.datetime(int(args.end_date[0:4]),
-                        int(args.end_date[5:7]),
-                        int(args.end_date[8:10])).date() if args.end_date else datetime.datetime(9999, 12, 31).date()
 
     # Read values with GUI if user wants to
     if args.gui:
-        Args.file_name, Args.graphs, Args.totals, Args.ignored_stats, Args.searched_stats, Args.minimum_labeling_percentage, start_date, end_date\
+        Args.file_name, Args.graphs, Args.totals, Args.ignored_stats, Args.searched_stats, Args.minimum_labeling_percentage, Args.start_date, Args.end_date\
             = GraphicalUserInterface.initialize_gui()
 
     dates = []
@@ -250,8 +244,8 @@ def main():
 
             # Read dates and labels
             fetch_dates_and_labels(data,
-                                   start_date,
-                                   end_date,
+                                   Args.start_date,
+                                   Args.end_date,
                                    dates,
                                    languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
                                    editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
@@ -265,13 +259,13 @@ def main():
 
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, start_date, end_date, languages_stats, Args.searched_stats, Args.ignored_stats)
+                populate_stats(data, Args.start_date, Args.end_date, languages_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(languages_stats, Args.minimum_labeling_percentage)
             if "e" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, start_date, end_date, editors_stats, Args.searched_stats, Args.ignored_stats)
+                populate_stats(data, Args.start_date, Args.end_date, editors_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(editors_stats, Args.minimum_labeling_percentage)
             if "o" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, start_date, end_date, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
+                populate_stats(data, Args.start_date, Args.end_date, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(operating_systems_stats, Args.minimum_labeling_percentage)
 
             # User wants to show daily stats

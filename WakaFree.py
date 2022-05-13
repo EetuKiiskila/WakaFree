@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-import Arguments
+import Args
 import GraphicalUserInterface
 import Plotting
 
@@ -220,10 +220,10 @@ def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
 
 def main():
     # Initialize argument parser
-    parser = Arguments.initialize_parser()
+    Args.initialize_parser()
 
     # Read arguments
-    args = parser.parse_args()
+    args = Args.parser.parse_args()
     file_name = args.file if args.file else ""
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""

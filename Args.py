@@ -1,11 +1,13 @@
 import argparse
 
 
-def initialize_parser() -> argparse.ArgumentParser:
-    """Initialize argparse parser.
+parser: argparse.ArgumentParser
 
-    :return: Argument parser.
-    """
+
+def initialize_parser() -> None:
+    """Initialize argparse parser."""
+    global parser
+
     parser = argparse.ArgumentParser(description="You can use this program to show your statistics from WakaTime.",
                                      usage=("python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS]"
                                             " [{-i IGNORE | -s SEARCH}] [-m MINIMUM_LABELING_PERCENTAGE]"
@@ -24,5 +26,3 @@ def initialize_parser() -> argparse.ArgumentParser:
                         help="add together (under label Other) stats with lesser percentage than the given value")
     parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
     parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
-
-    return parser

@@ -13,6 +13,7 @@ searched_stats: list
 minimum_labeling_percentage: float
 start_date: datetime.date
 end_date: datetime.date
+gui: bool
 
 
 def initialize_parser() -> None:
@@ -50,6 +51,7 @@ def parse() -> None:
     global minimum_labeling_percentage
     global start_date
     global end_date
+    global gui
 
     args = parser.parse_args()
 
@@ -63,3 +65,4 @@ def parse() -> None:
         if args.start_date else datetime.date(1, 1, 1)
     end_date = datetime.date(int(args.end_date[0:4]), int(args.end_date[5:7]), int(args.end_date[8:10]))\
         if args.end_date else datetime.date(9999, 12, 31)
+    gui = True if args.gui else False

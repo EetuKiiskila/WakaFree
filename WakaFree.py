@@ -223,11 +223,8 @@ def main():
     Args.initialize_parser()
     Args.parse()
 
-    # Read arguments
-    args = Args.args
-
     # Read values with GUI if user wants to
-    if args.gui:
+    if Args.gui:
         Args.file_name, Args.graphs, Args.totals, Args.ignored_stats, Args.searched_stats, Args.minimum_labeling_percentage, Args.start_date, Args.end_date\
             = GraphicalUserInterface.initialize_gui()
 
@@ -303,7 +300,7 @@ def main():
 
     # User did not specify a file or an optional argument
     else:
-        if not args.gui:
+        if not Args.gui:
             print("\n"
                   "You did not specify what you would like to do."
                   " To get help, try using either of the following commands:\n\n"

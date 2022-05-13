@@ -219,12 +219,12 @@ def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
 
 
 def main():
-    # Initialize argument parser
+    # Parse arguments
     Args.initialize_parser()
+    Args.parse()
 
     # Read arguments
-    args = Args.parser.parse_args()
-    file_name = args.file if args.file else ""
+    args = Args.args
     graphs = args.graphs if args.graphs else ""
     totals = args.totals if args.totals else ""
     ignored_stats = args.ignore.split(",") if args.ignore else []
@@ -239,7 +239,7 @@ def main():
 
     # Read values with GUI if user wants to
     if args.gui:
-        file_name, graphs, totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
+        Args.file_name, graphs, totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
             = GraphicalUserInterface.initialize_gui()
 
     dates = []
@@ -249,8 +249,8 @@ def main():
     operating_systems_stats = Stats("operating_systems", {}, [], [])
 
     # User specified a file
-    if file_name != "":
-        with open(file_name, "r") as file:
+    if Args.file_name != "":
+        with open(Args.file_name, "r") as file:
             data = json.load(file)
 
             # Read dates and labels

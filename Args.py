@@ -2,6 +2,9 @@ import argparse
 
 
 parser: argparse.ArgumentParser
+args: argparse.Namespace
+
+file_name: str
 
 
 def initialize_parser() -> None:
@@ -26,3 +29,13 @@ def initialize_parser() -> None:
                         help="add together (under label Other) stats with lesser percentage than the given value")
     parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
     parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
+
+
+def parse() -> None:
+    """Parse arguments."""
+    global args
+    global file_name
+
+    args = parser.parse_args()
+
+    file_name = args.file if args.file else ""

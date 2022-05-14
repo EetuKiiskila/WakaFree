@@ -85,12 +85,10 @@ def fetch_dates_and_labels(wakatime_json):
                 fetch_labels_of_a_day(day, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
 
 
-def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, ignored_stats):
+def populate_stats(wakatime_json, stats, searched_stats, ignored_stats):
     """Read daily stats in given file for operating systems.
 
     :param wakatime_json: Stats from WakaTime.
-    :param start_date: Start date to ignore dates before.
-    :param end_date: End date to ignore dates after.
     :param stats: Object of type Stats.
     :param searched_stats: List of labels to search for.
     :param ignored_stats: List of labels to ignore.
@@ -102,9 +100,9 @@ def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, i
     # Loop through all days
     for day in wakatime_json["days"]:
         # Skip day depending on start and end dates
-        if day["date"] < str(start_date):
+        if day["date"] < str(Args.start_date):
             continue
-        elif day["date"] > str(end_date):
+        elif day["date"] > str(Args.end_date):
             continue
 
         # Increment how many days have been processed

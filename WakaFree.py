@@ -23,13 +23,13 @@ def main():
 
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():
-                Data.populate_stats(data, Args.start_date, Args.end_date, Data.languages_stats, Args.searched_stats, Args.ignored_stats)
+                Data.populate_stats(data, Data.languages_stats, Args.searched_stats, Args.ignored_stats)
                 Data.sort_stats_and_populate_keys(Data.languages_stats, Args.minimum_labeling_percentage)
             if "e" in (Args.graphs + Args.totals).lower():
-                Data.populate_stats(data, Args.start_date, Args.end_date, Data.editors_stats, Args.searched_stats, Args.ignored_stats)
+                Data.populate_stats(data, Data.editors_stats, Args.searched_stats, Args.ignored_stats)
                 Data.sort_stats_and_populate_keys(Data.editors_stats, Args.minimum_labeling_percentage)
             if "o" in (Args.graphs + Args.totals).lower():
-                Data.populate_stats(data, Args.start_date, Args.end_date, Data.operating_systems_stats, Args.searched_stats, Args.ignored_stats)
+                Data.populate_stats(data, Data.operating_systems_stats, Args.searched_stats, Args.ignored_stats)
                 Data.sort_stats_and_populate_keys(Data.operating_systems_stats, Args.minimum_labeling_percentage)
 
             # User wants to show daily stats

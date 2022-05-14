@@ -172,11 +172,10 @@ def unify_stats(stats, minimum_labeling_percentage):
         del(stats.total_times[index])
 
 
-def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
+def sort_stats_and_populate_keys(stats):
     """Sort the stats from most common to least common.
 
     :param stats: Object of type Stats.
-    :param minimum_labeling_percentage: Stats are moved under the label Other according to this percentage.
     """
     total_hours = 0
 
@@ -193,8 +192,8 @@ def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
         stats.keys.append(label)
 
     # Unify stats according to user input
-    if minimum_labeling_percentage != 0.0:
-        unify_stats(stats, minimum_labeling_percentage)
+    if Args.minimum_labeling_percentage != 0.0:
+        unify_stats(stats, Args.minimum_labeling_percentage)
 
     # Reorder from most used to least used
     stats.total_times, stats.keys = zip(*sorted(zip(stats.total_times, stats.keys), reverse=True))

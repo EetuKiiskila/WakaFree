@@ -24,13 +24,13 @@ def main():
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():
                 Data.populate_stats(data, Data.languages_stats)
-                Data.sort_stats_and_populate_keys(Data.languages_stats, Args.minimum_labeling_percentage)
+                Data.sort_stats_and_populate_keys(Data.languages_stats)
             if "e" in (Args.graphs + Args.totals).lower():
                 Data.populate_stats(data, Data.editors_stats)
-                Data.sort_stats_and_populate_keys(Data.editors_stats, Args.minimum_labeling_percentage)
+                Data.sort_stats_and_populate_keys(Data.editors_stats)
             if "o" in (Args.graphs + Args.totals).lower():
                 Data.populate_stats(data, Data.operating_systems_stats)
-                Data.sort_stats_and_populate_keys(Data.operating_systems_stats, Args.minimum_labeling_percentage)
+                Data.sort_stats_and_populate_keys(Data.operating_systems_stats)
 
             # User wants to show daily stats
             if Args.graphs != "" or (Args.graphs == "" and Args.totals == ""):

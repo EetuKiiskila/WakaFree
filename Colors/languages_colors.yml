@@ -54,6 +54,8 @@ AutoIt:
     color: "#36699B"
 Ballerina:
     color: "#FF5000"
+Bash:
+    color: "#89e051"
 Batchfile:
     color: "#C1F12E"
 Beef:
@@ -102,6 +104,8 @@ Clojure:
     color: "#db5855"
 Closure Templates:
     color: "#0d948f"
+CMake:
+    color: "#DA3434"
 CoffeeScript:
     color: "#244776"
 ColdFusion:
@@ -196,6 +200,10 @@ Genie:
     color: "#fb855d"
 Gherkin:
     color: "#5B2063"
+Git Config:
+    color: "#F44D27"
+GLSL:
+    color: "#5686a5"
 Glyph:
     color: "#e4cc98"
 Gnuplot:
@@ -240,6 +248,8 @@ Idris:
     color: "#b30000"
 ImageJ Macro:
     color: "#99AAFF"
+INI:
+    color: "#d1dbe0"
 Io:
     color: "#a9188d"
 Ioke:
@@ -258,6 +268,8 @@ JavaScript:
     color: "#f1e05a"
 Jolie:
     color: "#843179"
+JSON:
+    color: "#292929"
 Jsonnet:
     color: "#0064bd"
 Julia:
@@ -500,6 +512,8 @@ SCSS:
     color: "#c6538c"
 SQF:
     color: "#FFCB1F"
+SQL:
+    color: "#e38c00"
 SRecode Template:
     color: "#348a34"
 SVG:
@@ -608,6 +622,8 @@ X10:
     color: "#4B6BEF"
 XC:
     color: "#99DA07"
+XML:
+    color: "#0060ac"
 XQuery:
     color: "#2700e2"
 XSLT:

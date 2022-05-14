@@ -16,9 +16,6 @@ def main():
 
             # Read dates and labels
             Data.fetch_dates_and_labels(data,
-                                   Args.start_date,
-                                   Args.end_date,
-                                   Data.dates,
                                    Data.languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
                                    Data.editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
                                    Data.operating_systems_stats if "o" in (Args.graphs + Args.totals).lower() else None,

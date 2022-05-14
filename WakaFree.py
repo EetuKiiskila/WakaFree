@@ -65,15 +65,6 @@ def main():
                                             Data.operating_systems_stats.total_times,
                                             "operating_systems")
 
-    # User did not specify a file or an optional argument
-    else:
-        if not Args.gui:
-            print("\n"
-                  "You did not specify what you would like to do."
-                  " To get help, try using either of the following commands:\n\n"
-                  "python WakaFree.py -h\n"
-                  "python WakaFree.py --help")
-
 
 # Start main program
 if __name__ == "__main__":

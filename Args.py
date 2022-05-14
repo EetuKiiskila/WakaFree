@@ -74,3 +74,20 @@ def parse() -> None:
     # Read values with GUI if user wants to
     if gui:
         GUI.show()
+
+    execute_command()
+
+
+def execute_command() -> None:
+    """Execute command specified by arguments."""
+    if file_name != "":
+        pass
+
+    # User did not give a file or an optional argument
+    else:
+        if not gui:
+            print("\n"
+                  "You did not specify what you would like to do."
+                  " To get help, try using either of the following commands:\n\n"
+                  "python WakaFree.py -h\n"
+                  "python WakaFree.py --help")

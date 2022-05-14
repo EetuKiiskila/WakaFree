@@ -59,18 +59,10 @@ def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
                 stats.daily_stats[label["name"]] = []
 
 
-def fetch_dates_and_labels(wakatime_json,
-                           searched_stats,
-                           ignored_stats):
+def fetch_dates_and_labels(wakatime_json):
     """Read dates in given file.
 
     :param wakatime_json: Stats from WakaTime.
-    :param end_date: End date to ignore dates after.
-    :param languages_stats: Dict to create lists for stats in with languages as keys.
-    :param editors_stats: Dict to create lists for stats in with editors as keys.
-    :param operating_systems_stats: Dict to create lists for stats in with operating systems as keys.
-    :param searched_stats: List of labels to search for.
-    :param ignored_stats: List of labels to ignore.
     """
     for day in wakatime_json["days"]:
         # Skip day if not in given range
@@ -82,15 +74,15 @@ def fetch_dates_and_labels(wakatime_json,
 
             # Add language labels to the list of languages
             if "l" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(day, languages_stats, searched_stats, ignored_stats)
+                fetch_labels_of_a_day(day, languages_stats, Args.searched_stats, Args.ignored_stats)
 
             # Add editor labels to the list of editors
             if "e" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(day, editors_stats, searched_stats, ignored_stats)
+                fetch_labels_of_a_day(day, editors_stats, Args.searched_stats, Args.ignored_stats)
 
             # Add operating system labels to the list of operating systems
             if "o" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(day, operating_systems_stats, searched_stats, ignored_stats)
+                fetch_labels_of_a_day(day, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
 
 
 def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, ignored_stats):

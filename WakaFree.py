@@ -15,9 +15,7 @@ def main():
             data = json.load(file)
 
             # Read dates and labels
-            Data.fetch_dates_and_labels(data,
-                                   searched_stats=Args.searched_stats,
-                                   ignored_stats=Args.ignored_stats)
+            Data.fetch_dates_and_labels(data)
 
             # Covert strings to dates
             for index, date in enumerate(Data.dates):

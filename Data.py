@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import datetime
+import numpy as np
 
 
 @dataclass
@@ -150,3 +151,40 @@ def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, i
             # If the label has no stats for the day add 0 hours
             if len(stats.daily_stats[label]) < number_of_days:
                 stats.daily_stats[label].append(0.0)
+
+
+def unify_stats(stats, minimum_labeling_percentage):
+    """Group stats under the label Other.
+
+    :param stats: Object of type stats.
+    :param minimum_labeling_percentage: Anything less than this percentage will be moved under the label Other.
+    """
+    removed_at_indexes = []
+
+    # Add label other if not already present
+    if "Other" not in stats.keys:
+        stats.keys.append("Other")
+        stats.total_times.append(0.0)
+        stats.daily_stats["Other"] = [0.0 for value in stats.daily_stats[stats.keys[0]]]
+
+    # Move stats with low percentage under the label Other
+    for index, total_time in enumerate(stats.total_times):
+        if stats.keys[index] == "Other":
+            continue
+        elif total_time / sum(stats.total_times) * 100.0 < minimum_labeling_percentage:
+            stats.daily_stats["Other"] = np.add(stats.daily_stats["Other"], stats.daily_stats[stats.keys[index]]).tolist()
+            stats.total_times[stats.keys.index("Other")] += stats.total_times[index]
+            removed_at_indexes.append(index)
+
+    # Remove the label Other if it is not used
+    if len(removed_at_indexes) == 0:
+        del(stats.total_times[stats.keys.index("Other")])
+        del(stats.daily_stats["Other"])
+        stats.keys.remove("Other")
+        return
+
+    # Remove duplicate stats of labels moved to Other
+    for index in reversed(removed_at_indexes):
+        del(stats.daily_stats[stats.keys[index]])
+        del(stats.keys[index])
+        del(stats.total_times[index])

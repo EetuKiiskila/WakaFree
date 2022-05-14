@@ -1,7 +1,10 @@
 import argparse
+import json
 import datetime
 
 import GUI
+import Data
+import Plotting
 
 
 parser: argparse.ArgumentParser
@@ -74,3 +77,76 @@ def parse() -> None:
     # Read values with GUI if user wants to
     if gui:
         GUI.show()
+
+    execute_command()
+
+
+def execute_command() -> None:
+    """Execute command specified by arguments."""
+
+    # User specified a file
+    if file_name != "":
+        with open(file_name, "r") as file:
+            user_data = json.load(file)
+
+            # Read dates and labels
+            Data.fetch_dates_and_labels(user_data)
+
+            # Convert strings to dates
+            for index, date in enumerate(Data.dates):
+                Data.dates[index] = Data.string_to_date(date)
+
+            # Read and sort data
+            if "l" in (graphs + totals).lower():
+                Data.populate_stats(user_data, Data.languages_stats)
+                Data.sort_stats_and_populate_keys(Data.languages_stats)
+            if "e" in (graphs + totals).lower():
+                Data.populate_stats(user_data, Data.editors_stats)
+                Data.sort_stats_and_populate_keys(Data.editors_stats)
+            if "o" in (graphs + totals).lower():
+                Data.populate_stats(user_data, Data.operating_systems_stats)
+                Data.sort_stats_and_populate_keys(Data.operating_systems_stats)
+
+            # Daily stats
+            if graphs != "" or (graphs == "" and totals == ""):
+                # Languages
+                if "l" in graphs.lower():
+                    Plotting.draw_graphs(Data.dates,
+                                         Data.languages_stats.keys,
+                                         Data.languages_stats.daily_stats,
+                                         "languages")
+                # Editors
+                if "e" in graphs.lower():
+                    Plotting.draw_graphs(Data.dates,
+                                         Data.editors_stats.keys,
+                                         Data.editors_stats.daily_stats,
+                                         "editors")
+                # Operating systems
+                if "o" in graphs.lower():
+                    Plotting.draw_graphs(Data.dates,
+                                         Data.operating_systems_stats.keys,
+                                         Data.operating_systems_stats.daily_stats,
+                                         "operating_systems")
+
+            # Total times
+            if totals != "" or (graphs == "" and totals == ""):
+                # Languages
+                if "l" in totals.lower():
+                    Plotting.draw_pie_chart(Data.languages_stats.keys, Data.languages_stats.total_times, "languages")
+                # Editors
+                if "e" in totals.lower():
+                    Plotting.draw_pie_chart(Data.editors_stats.keys, Data.editors_stats.total_times, "editors")
+                # Operating systems
+                if "o" in totals.lower():
+                    Plotting.draw_pie_chart(Data.operating_systems_stats.keys,
+                                            Data.operating_systems_stats.total_times,
+                                            "operating_systems")
+
+    # User did not give a file or an optional argument
+    else:
+        if not gui:
+            print("\n"
+                  "You did not specify what you would like to do."
+                  " To get help, try using either of the following commands:\n\n"
+                  "python WakaFree.py -h\n"
+                  "python WakaFree.py --help")

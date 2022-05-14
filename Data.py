@@ -54,3 +54,45 @@ def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
                 if label["name"] not in searched_stats:
                     continue
                 stats.daily_stats[label["name"]] = []
+
+
+def fetch_dates_and_labels(wakatime_json,
+                           start_date,
+                           end_date,
+                           dates,
+                           languages_stats,
+                           editors_stats,
+                           operating_systems_stats,
+                           searched_stats,
+                           ignored_stats):
+    """Read dates in given file.
+
+    :param wakatime_json: Stats from WakaTime.
+    :param start_date: Start date to ignore dates before.
+    :param end_date: End date to ignore dates after.
+    :param dates: List to store dates in.
+    :param languages_stats: Dict to create lists for stats in with languages as keys.
+    :param editors_stats: Dict to create lists for stats in with editors as keys.
+    :param operating_systems_stats: Dict to create lists for stats in with operating systems as keys.
+    :param searched_stats: List of labels to search for.
+    :param ignored_stats: List of labels to ignore.
+    """
+    for day in wakatime_json["days"]:
+        # Skip day if not in given range
+        if day["date"] < str(start_date) or day["date"] > str(end_date):
+            continue
+        else:
+            # Add date to the list of dates
+            dates.append(day["date"])
+
+            # Add language labels to the list of languages
+            if languages_stats is not None:
+                fetch_labels_of_a_day(day, languages_stats, searched_stats, ignored_stats)
+
+            # Add editor labels to the list of editors
+            if editors_stats is not None:
+                fetch_labels_of_a_day(day, editors_stats, searched_stats, ignored_stats)
+
+            # Add operating system labels to the list of operating systems
+            if operating_systems_stats is not None:
+                fetch_labels_of_a_day(day, operating_systems_stats, searched_stats, ignored_stats)

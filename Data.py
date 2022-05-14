@@ -60,9 +60,6 @@ def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
 
 
 def fetch_dates_and_labels(wakatime_json,
-                           languages_stats,
-                           editors_stats,
-                           operating_systems_stats,
                            searched_stats,
                            ignored_stats):
     """Read dates in given file.
@@ -84,15 +81,15 @@ def fetch_dates_and_labels(wakatime_json,
             dates.append(day["date"])
 
             # Add language labels to the list of languages
-            if languages_stats is not None:
+            if "l" in (Args.graphs + Args.totals).lower():
                 fetch_labels_of_a_day(day, languages_stats, searched_stats, ignored_stats)
 
             # Add editor labels to the list of editors
-            if editors_stats is not None:
+            if "e" in (Args.graphs + Args.totals).lower():
                 fetch_labels_of_a_day(day, editors_stats, searched_stats, ignored_stats)
 
             # Add operating system labels to the list of operating systems
-            if operating_systems_stats is not None:
+            if "o" in (Args.graphs + Args.totals).lower():
                 fetch_labels_of_a_day(day, operating_systems_stats, searched_stats, ignored_stats)
 
 

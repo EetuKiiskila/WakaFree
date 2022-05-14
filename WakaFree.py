@@ -16,9 +16,6 @@ def main():
 
             # Read dates and labels
             Data.fetch_dates_and_labels(data,
-                                   Data.languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
-                                   Data.editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
-                                   Data.operating_systems_stats if "o" in (Args.graphs + Args.totals).lower() else None,
                                    searched_stats=Args.searched_stats,
                                    ignored_stats=Args.ignored_stats)
 

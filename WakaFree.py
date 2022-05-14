@@ -7,21 +7,6 @@ import Data
 import Plotting
 
 
-def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
-    if stats is not None:
-        for label in day[stats.type_]:
-            if label["name"] in stats.daily_stats:
-                continue
-            if len(searched_stats) == 0:
-                if label["name"] in ignored_stats:
-                    continue
-                stats.daily_stats[label["name"]] = []
-            else:
-                if label["name"] not in searched_stats:
-                    continue
-                stats.daily_stats[label["name"]] = []
-
-
 def fetch_dates_and_labels(wakatime_json,
                            start_date,
                            end_date,
@@ -53,15 +38,15 @@ def fetch_dates_and_labels(wakatime_json,
 
             # Add language labels to the list of languages
             if languages_stats is not None:
-                fetch_labels_of_a_day(day, languages_stats, searched_stats, ignored_stats)
+                Data.fetch_labels_of_a_day(day, languages_stats, searched_stats, ignored_stats)
 
             # Add editor labels to the list of editors
             if editors_stats is not None:
-                fetch_labels_of_a_day(day, editors_stats, searched_stats, ignored_stats)
+                Data.fetch_labels_of_a_day(day, editors_stats, searched_stats, ignored_stats)
 
             # Add operating system labels to the list of operating systems
             if operating_systems_stats is not None:
-                fetch_labels_of_a_day(day, operating_systems_stats, searched_stats, ignored_stats)
+                Data.fetch_labels_of_a_day(day, operating_systems_stats, searched_stats, ignored_stats)
 
 
 def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, ignored_stats):

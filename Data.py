@@ -39,3 +39,18 @@ def string_to_date(date_string):
     :return: Date as a datetime date.
     """
     return datetime.datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
+
+
+def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
+    if stats is not None:
+        for label in day[stats.type_]:
+            if label["name"] in stats.daily_stats:
+                continue
+            if len(searched_stats) == 0:
+                if label["name"] in ignored_stats:
+                    continue
+                stats.daily_stats[label["name"]] = []
+            else:
+                if label["name"] not in searched_stats:
+                    continue
+                stats.daily_stats[label["name"]] = []

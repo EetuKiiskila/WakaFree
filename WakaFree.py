@@ -1,26 +1,11 @@
 import json
 import datetime
-from dataclasses import dataclass
 
 import numpy as np
 
 import Args
+import Data
 import Plotting
-
-
-@dataclass
-class Stats:
-    """Data class that can store statistics read from a WakaTime JSON file.
-
-    :ivar type_: The type of the object. Possible values: "languages", "editors", "operating_systems".
-    :ivar daily_stats: Container for daily stats. Should be initialized as an empty dict.
-    :ivar keys: Container for labels. Should be initialized as an empty list.
-    :ivar total_times: Container for total times. Should be initialized as an empty list.
-    """
-    type_: str
-    daily_stats: dict
-    keys: list
-    total_times: list
 
 
 def seconds_to_hours(seconds):
@@ -223,9 +208,9 @@ def main():
 
     dates = []
 
-    languages_stats = Stats("languages", {}, [], [])
-    editors_stats = Stats("editors", {}, [], [])
-    operating_systems_stats = Stats("operating_systems", {}, [], [])
+    languages_stats = Data.Stats("languages", {}, [], [])
+    editors_stats = Data.Stats("editors", {}, [], [])
+    operating_systems_stats = Data.Stats("operating_systems", {}, [], [])
 
     # User specified a file
     if Args.file_name != "":

@@ -187,12 +187,6 @@ def main():
     # Parse arguments
     Args.parse()
 
-    dates = []
-
-    languages_stats = Data.Stats("languages", {}, [], [])
-    editors_stats = Data.Stats("editors", {}, [], [])
-    operating_systems_stats = Data.Stats("operating_systems", {}, [], [])
-
     # User specified a file
     if Args.file_name != "":
         with open(Args.file_name, "r") as file:
@@ -202,59 +196,59 @@ def main():
             fetch_dates_and_labels(data,
                                    Args.start_date,
                                    Args.end_date,
-                                   dates,
-                                   languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
-                                   editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
-                                   operating_systems_stats if "o" in (Args.graphs + Args.totals).lower() else None,
+                                   Data.dates,
+                                   Data.languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
+                                   Data.editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
+                                   Data.operating_systems_stats if "o" in (Args.graphs + Args.totals).lower() else None,
                                    searched_stats=Args.searched_stats,
                                    ignored_stats=Args.ignored_stats)
 
             # Covert strings to dates
-            for index, date in enumerate(dates):
-                dates[index] = Data.string_to_date(date)
+            for index, date in enumerate(Data.dates):
+                Data.dates[index] = Data.string_to_date(date)
 
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, Args.start_date, Args.end_date, languages_stats, Args.searched_stats, Args.ignored_stats)
-                sort_stats_and_populate_keys(languages_stats, Args.minimum_labeling_percentage)
+                populate_stats(data, Args.start_date, Args.end_date, Data.languages_stats, Args.searched_stats, Args.ignored_stats)
+                sort_stats_and_populate_keys(Data.languages_stats, Args.minimum_labeling_percentage)
             if "e" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, Args.start_date, Args.end_date, editors_stats, Args.searched_stats, Args.ignored_stats)
-                sort_stats_and_populate_keys(editors_stats, Args.minimum_labeling_percentage)
+                populate_stats(data, Args.start_date, Args.end_date, Data.editors_stats, Args.searched_stats, Args.ignored_stats)
+                sort_stats_and_populate_keys(Data.editors_stats, Args.minimum_labeling_percentage)
             if "o" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, Args.start_date, Args.end_date, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
-                sort_stats_and_populate_keys(operating_systems_stats, Args.minimum_labeling_percentage)
+                populate_stats(data, Args.start_date, Args.end_date, Data.operating_systems_stats, Args.searched_stats, Args.ignored_stats)
+                sort_stats_and_populate_keys(Data.operating_systems_stats, Args.minimum_labeling_percentage)
 
             # User wants to show daily stats
             if Args.graphs != "" or (Args.graphs == "" and Args.totals == ""):
                 # Languages graphs
                 if "l" in Args.graphs.lower():
-                    Plotting.draw_graphs(dates, languages_stats.keys, languages_stats.daily_stats, "languages")
+                    Plotting.draw_graphs(Data.dates, Data.languages_stats.keys, Data.languages_stats.daily_stats, "languages")
 
                 # Editors graphs
                 if "e" in Args.graphs.lower():
-                    Plotting.draw_graphs(dates, editors_stats.keys, editors_stats.daily_stats, "editors")
+                    Plotting.draw_graphs(Data.dates, Data.editors_stats.keys, Data.editors_stats.daily_stats, "editors")
 
                 # Operating systems graphs
                 if "o" in Args.graphs.lower():
-                    Plotting.draw_graphs(dates,
-                                         operating_systems_stats.keys,
-                                         operating_systems_stats.daily_stats,
+                    Plotting.draw_graphs(Data.dates,
+                                         Data.operating_systems_stats.keys,
+                                         Data.operating_systems_stats.daily_stats,
                                          "operating_systems")
 
             # User wants to show total times
             if Args.totals != "" or (Args.graphs == "" and Args.totals == ""):
                 # Languages total times
                 if "l" in Args.totals.lower():
-                    Plotting.draw_pie_chart(languages_stats.keys, languages_stats.total_times, "languages")
+                    Plotting.draw_pie_chart(Data.languages_stats.keys, Data.languages_stats.total_times, "languages")
 
                 # Editors total times
                 if "e" in Args.totals.lower():
-                    Plotting.draw_pie_chart(editors_stats.keys, editors_stats.total_times, "editors")
+                    Plotting.draw_pie_chart(Data.editors_stats.keys, Data.editors_stats.total_times, "editors")
 
                 # Operating systems total times
                 if "o" in Args.totals.lower():
-                    Plotting.draw_pie_chart(operating_systems_stats.keys,
-                                            operating_systems_stats.total_times,
+                    Plotting.draw_pie_chart(Data.operating_systems_stats.keys,
+                                            Data.operating_systems_stats.total_times,
                                             "operating_systems")
 
     # User did not specify a file or an optional argument

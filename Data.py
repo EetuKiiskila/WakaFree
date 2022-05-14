@@ -17,6 +17,12 @@ class Stats:
     total_times: list
 
 
+dates: list = []
+languages_stats: Stats = Stats("languages", {}, [], [])
+editors_stats: Stats = Stats("editors", {}, [], [])
+operating_systems_stats: Stats = Stats("operating_systems", {}, [], [])
+
+
 def seconds_to_hours(seconds):
     """Convert seconds to hours.
 

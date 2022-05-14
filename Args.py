@@ -123,15 +123,13 @@ def execute_command() -> None:
             if totals != "" or (graphs == "" and totals == ""):
                 # Languages
                 if "l" in totals.lower():
-                    Plotting.draw_pie_chart(Data.languages_stats.keys, Data.languages_stats.total_times, "languages")
+                    Plotting.draw_pie_chart(Data.languages_stats)
                 # Editors
                 if "e" in totals.lower():
-                    Plotting.draw_pie_chart(Data.editors_stats.keys, Data.editors_stats.total_times, "editors")
+                    Plotting.draw_pie_chart(Data.editors_stats)
                 # Operating systems
                 if "o" in totals.lower():
-                    Plotting.draw_pie_chart(Data.operating_systems_stats.keys,
-                                            Data.operating_systems_stats.total_times,
-                                            "operating_systems")
+                    Plotting.draw_pie_chart(Data.operating_systems_stats)
 
     # User did not give a file or an optional argument
     else:

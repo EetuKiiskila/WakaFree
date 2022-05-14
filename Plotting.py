@@ -54,29 +54,33 @@ def draw_graphs(dates: list[datetime.date], stats: Data.Stats) -> None:
     fig.show()
 
 
-def draw_pie_chart(keys, total_times, data_type):
-    colors_file_path = None
+def draw_pie_chart(stats: Data.Stats) -> None:
+    """Draw chart showing total times.
 
-    match data_type:
+    :param stats: Stats.
+    """
+    match stats.type_:
         case "languages":
             colors_file_path = colors_file_path_languages
         case "editors":
             colors_file_path = colors_file_path_editors
         case "operating_systems":
             colors_file_path = colors_file_path_operating_systems
+        case _:
+            colors_file_path = None
 
     labels = []
     colors = []
 
-    total_hours = 0
+    total_hours = 0.0
 
     with open(colors_file_path, "r") as colors_file:
         colors_data = yaml.safe_load(colors_file)
 
         # Loop keys
-        for index, key in enumerate(keys):
+        for index, key in enumerate(stats.keys):
 
-            hours = total_times[index]
+            hours = stats.total_times[index]
 
             # Add time to total time
             total_hours += hours
@@ -85,14 +89,14 @@ def draw_pie_chart(keys, total_times, data_type):
             labels.append(key + " - {0} h {1} min".format(int(hours), int((hours - int(hours)) * 60)))
             try:
                 colors.append(colors_data[key]["color"])
-            except Exception:
+            except KeyError:
                 colors.append(colors_data["Other"]["color"])
 
     # Add percent sign to legends
-    for index, time in enumerate(total_times):
-        labels[index] += " ({0:.2f} %)".format(total_times[index] / total_hours * 100)
+    for index, time in enumerate(stats.total_times):
+        labels[index] += " ({0:.2f} %)".format(stats.total_times[index] / total_hours * 100)
 
-    # Draw pie chart
-    fig = px.pie(names=labels, values=total_times, color_discrete_sequence=colors)
+    fig = px.pie(names=labels, values=stats.total_times, color_discrete_sequence=colors)
     fig.update_traces(marker=dict(line=dict(color="black", width=0.5)), textinfo="none", hovertemplate=labels)
+
     fig.show()

@@ -1,11 +1,10 @@
-import argparse
 import json
 import datetime
 from dataclasses import dataclass
 
 import numpy as np
 
-import GraphicalUserInterface
+import Args
 import Plotting
 
 
@@ -40,33 +39,6 @@ def string_to_date(date_string):
     :return: Date as a datetime date.
     """
     return datetime.datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
-
-
-def initialize_argument_parser():
-    """Initialize and return an argparse parser with description, usage help and arguments to parse.
-
-    :return: Parser of type argparse.ArgumentParser.
-    """
-    parser = argparse.ArgumentParser(description="You can use this program to show your statistics from WakaTime.",
-                                     usage=("python WakaFree.py {-h | -G | [-g GRAPHS] [-t TOTALS]"
-                                            " [{-i IGNORE | -s SEARCH}] [-m MINIMUM_LABELING_PERCENTAGE]"
-                                            " [--start-date START_DATE] [--end-date END_DATE] FILE}"))
-
-    parser.add_argument("file", metavar="FILE", nargs="?", default="", help="path to file with statistics")
-    parser.add_argument("-G", "--gui", action="store_true", help="use graphical user interface")
-    parser.add_argument("-g", "--graphs",
-                        help="show daily statistics: string with l, e, o for languages, editors, operating systems")
-    parser.add_argument("-t", "--totals",
-                        help="show total times: string with l, e, o for languages, editors, operating systems")
-    parser.add_argument("-i", "--ignore", help="ignored stats: string with labels separated by commas (without spaces)")
-    parser.add_argument("-s", "--search",
-                        help="stats to search for: string with labels separated by commas (without spaces)")
-    parser.add_argument("-m", "--minimum-labeling-percentage",
-                        help="add together (under label Other) stats with lesser percentage than the given value")
-    parser.add_argument("--start-date", help="start date in format YYYY-MM-DD (inclusive)")
-    parser.add_argument("--end-date", help="end date in format YYYY-MM-DD (inclusive)")
-
-    return parser
 
 
 def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
@@ -246,28 +218,8 @@ def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
 
 
 def main():
-    # Initialize argument parser
-    parser = initialize_argument_parser()
-
-    # Read arguments
-    args = parser.parse_args()
-    file_name = args.file if args.file else ""
-    graphs = args.graphs if args.graphs else ""
-    totals = args.totals if args.totals else ""
-    ignored_stats = args.ignore.split(",") if args.ignore else []
-    searched_stats = args.search.split(",") if args.search else []
-    minimum_labeling_percentage = float(args.minimum_labeling_percentage) if args.minimum_labeling_percentage else 0.0
-    start_date = datetime.datetime(int(args.start_date[0:4]),
-                          int(args.start_date[5:7]),
-                          int(args.start_date[8:10])).date() if args.start_date else datetime.datetime(1, 1, 1).date()
-    end_date = datetime.datetime(int(args.end_date[0:4]),
-                        int(args.end_date[5:7]),
-                        int(args.end_date[8:10])).date() if args.end_date else datetime.datetime(9999, 12, 31).date()
-
-    # Read values with GUI if user wants to
-    if args.gui:
-        file_name, graphs, totals, ignored_stats, searched_stats, minimum_labeling_percentage, start_date, end_date\
-            = GraphicalUserInterface.initialize_gui()
+    # Parse arguments
+    Args.parse()
 
     dates = []
 
@@ -276,72 +228,72 @@ def main():
     operating_systems_stats = Stats("operating_systems", {}, [], [])
 
     # User specified a file
-    if file_name != "":
-        with open(file_name, "r") as file:
+    if Args.file_name != "":
+        with open(Args.file_name, "r") as file:
             data = json.load(file)
 
             # Read dates and labels
             fetch_dates_and_labels(data,
-                                   start_date,
-                                   end_date,
+                                   Args.start_date,
+                                   Args.end_date,
                                    dates,
-                                   languages_stats if "l" in (graphs + totals).lower() else None,
-                                   editors_stats if "e" in (graphs + totals).lower() else None,
-                                   operating_systems_stats if "o" in (graphs + totals).lower() else None,
-                                   searched_stats=searched_stats,
-                                   ignored_stats=ignored_stats)
+                                   languages_stats if "l" in (Args.graphs + Args.totals).lower() else None,
+                                   editors_stats if "e" in (Args.graphs + Args.totals).lower() else None,
+                                   operating_systems_stats if "o" in (Args.graphs + Args.totals).lower() else None,
+                                   searched_stats=Args.searched_stats,
+                                   ignored_stats=Args.ignored_stats)
 
             # Covert strings to dates
             for index, date in enumerate(dates):
                 dates[index] = string_to_date(date)
 
             # Read and sort data
-            if "l" in (graphs + totals).lower():
-                populate_stats(data, start_date, end_date, languages_stats, searched_stats, ignored_stats)
-                sort_stats_and_populate_keys(languages_stats, minimum_labeling_percentage)
-            if "e" in (graphs + totals).lower():
-                populate_stats(data, start_date, end_date, editors_stats, searched_stats, ignored_stats)
-                sort_stats_and_populate_keys(editors_stats, minimum_labeling_percentage)
-            if "o" in (graphs + totals).lower():
-                populate_stats(data, start_date, end_date, operating_systems_stats, searched_stats, ignored_stats)
-                sort_stats_and_populate_keys(operating_systems_stats, minimum_labeling_percentage)
+            if "l" in (Args.graphs + Args.totals).lower():
+                populate_stats(data, Args.start_date, Args.end_date, languages_stats, Args.searched_stats, Args.ignored_stats)
+                sort_stats_and_populate_keys(languages_stats, Args.minimum_labeling_percentage)
+            if "e" in (Args.graphs + Args.totals).lower():
+                populate_stats(data, Args.start_date, Args.end_date, editors_stats, Args.searched_stats, Args.ignored_stats)
+                sort_stats_and_populate_keys(editors_stats, Args.minimum_labeling_percentage)
+            if "o" in (Args.graphs + Args.totals).lower():
+                populate_stats(data, Args.start_date, Args.end_date, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
+                sort_stats_and_populate_keys(operating_systems_stats, Args.minimum_labeling_percentage)
 
             # User wants to show daily stats
-            if graphs != "" or (graphs == "" and totals == ""):
+            if Args.graphs != "" or (Args.graphs == "" and Args.totals == ""):
                 # Languages graphs
-                if "l" in graphs.lower():
+                if "l" in Args.graphs.lower():
                     Plotting.draw_graphs(dates, languages_stats.keys, languages_stats.daily_stats, "languages")
 
                 # Editors graphs
-                if "e" in graphs.lower():
+                if "e" in Args.graphs.lower():
                     Plotting.draw_graphs(dates, editors_stats.keys, editors_stats.daily_stats, "editors")
 
                 # Operating systems graphs
-                if "o" in graphs.lower():
+                if "o" in Args.graphs.lower():
                     Plotting.draw_graphs(dates,
                                          operating_systems_stats.keys,
                                          operating_systems_stats.daily_stats,
                                          "operating_systems")
 
             # User wants to show total times
-            if totals != "" or (graphs == "" and totals == ""):
+            if Args.totals != "" or (Args.graphs == "" and Args.totals == ""):
                 # Languages total times
-                if "l" in totals.lower():
+                if "l" in Args.totals.lower():
                     Plotting.draw_pie_chart(languages_stats.keys, languages_stats.total_times, "languages")
 
                 # Editors total times
-                if "e" in totals.lower():
+                if "e" in Args.totals.lower():
                     Plotting.draw_pie_chart(editors_stats.keys, editors_stats.total_times, "editors")
 
                 # Operating systems total times
-                if "o" in totals.lower():
+                if "o" in Args.totals.lower():
                     Plotting.draw_pie_chart(operating_systems_stats.keys,
                                             operating_systems_stats.total_times,
                                             "operating_systems")
 
     # User did not specify a file or an optional argument
     else:
-        if not args.gui:
+        if not Args.gui:
             print("\n"
                   "You did not specify what you would like to do."
                   " To get help, try using either of the following commands:\n\n"

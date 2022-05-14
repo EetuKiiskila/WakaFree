@@ -73,11 +73,4 @@ def parse() -> None:
 
     # Read values with GUI if user wants to
     if gui:
-        (file_name,
-         graphs,
-         totals,
-         ignored_stats,
-         searched_stats,
-         minimum_labeling_percentage,
-         start_date,
-         end_date) = GUI.initialize_gui()
+        GUI.show()

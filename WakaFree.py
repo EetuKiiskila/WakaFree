@@ -7,60 +7,6 @@ import Data
 import Plotting
 
 
-def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, ignored_stats):
-    """Read daily stats in given file for operating systems.
-
-    :param wakatime_json: Stats from WakaTime.
-    :param start_date: Start date to ignore dates before.
-    :param end_date: End date to ignore dates after.
-    :param stats: Object of type Stats.
-    :param searched_stats: List of labels to search for.
-    :param ignored_stats: List of labels to ignore.
-    """
-
-    # How many days have been processed
-    number_of_days = 0
-
-    # Loop through all days
-    for day in wakatime_json["days"]:
-        # Skip day depending on start and end dates
-        if day["date"] < str(start_date):
-            continue
-        elif day["date"] > str(end_date):
-            continue
-
-        # Increment how many days have been processed
-        number_of_days += 1
-
-        # No stats of specified type for the day
-        if len(day[stats.type_]) == 0:
-            # Add 0 hours to all labels for the day
-            for label in stats.daily_stats:
-                stats.daily_stats[label].append(0.0)
-
-        # Stats of specified type exist for the day
-        else:
-            # Loop through labels
-            for label in day[stats.type_]:
-                # Skip the label depending on user input
-                if len(searched_stats) == 0:
-                    if label["name"] in ignored_stats:
-                        continue
-                else:
-                    if label["name"] not in searched_stats:
-                        continue
-
-                # Add label's stats for the day converted to hours
-                stats.daily_stats[label["name"]]\
-                    .append(Data.seconds_to_hours(label["total_seconds"]))
-
-        # Loop through labels
-        for label in stats.daily_stats:
-            # If the label has no stats for the day add 0 hours
-            if len(stats.daily_stats[label]) < number_of_days:
-                stats.daily_stats[label].append(0.0)
-
-
 def unify_stats(stats, minimum_labeling_percentage):
     """Group stats under the label Other.
 
@@ -152,13 +98,13 @@ def main():
 
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, Args.start_date, Args.end_date, Data.languages_stats, Args.searched_stats, Args.ignored_stats)
+                Data.populate_stats(data, Args.start_date, Args.end_date, Data.languages_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(Data.languages_stats, Args.minimum_labeling_percentage)
             if "e" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, Args.start_date, Args.end_date, Data.editors_stats, Args.searched_stats, Args.ignored_stats)
+                Data.populate_stats(data, Args.start_date, Args.end_date, Data.editors_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(Data.editors_stats, Args.minimum_labeling_percentage)
             if "o" in (Args.graphs + Args.totals).lower():
-                populate_stats(data, Args.start_date, Args.end_date, Data.operating_systems_stats, Args.searched_stats, Args.ignored_stats)
+                Data.populate_stats(data, Args.start_date, Args.end_date, Data.operating_systems_stats, Args.searched_stats, Args.ignored_stats)
                 sort_stats_and_populate_keys(Data.operating_systems_stats, Args.minimum_labeling_percentage)
 
             # User wants to show daily stats

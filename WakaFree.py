@@ -5,34 +5,6 @@ import Data
 import Plotting
 
 
-def sort_stats_and_populate_keys(stats, minimum_labeling_percentage):
-    """Sort the stats from most common to least common.
-
-    :param stats: Object of type Stats.
-    :param minimum_labeling_percentage: Stats are moved under the label Other according to this percentage.
-    """
-    total_hours = 0
-
-    # Loop through labels
-    for label in stats.daily_stats:
-        # Total times for each label
-        hours = sum(stats.daily_stats[label])
-
-        # Add to total time of all labels
-        total_hours += hours
-
-        # Add to total times and keys of the label
-        stats.total_times.append(hours)
-        stats.keys.append(label)
-
-    # Unify stats according to user input
-    if minimum_labeling_percentage != 0.0:
-        Data.unify_stats(stats, minimum_labeling_percentage)
-
-    # Reorder from most used to least used
-    stats.total_times, stats.keys = zip(*sorted(zip(stats.total_times, stats.keys), reverse=True))
-
-
 def main():
     # Parse arguments
     Args.parse()
@@ -60,13 +32,13 @@ def main():
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():
                 Data.populate_stats(data, Args.start_date, Args.end_date, Data.languages_stats, Args.searched_stats, Args.ignored_stats)
-                sort_stats_and_populate_keys(Data.languages_stats, Args.minimum_labeling_percentage)
+                Data.sort_stats_and_populate_keys(Data.languages_stats, Args.minimum_labeling_percentage)
             if "e" in (Args.graphs + Args.totals).lower():
                 Data.populate_stats(data, Args.start_date, Args.end_date, Data.editors_stats, Args.searched_stats, Args.ignored_stats)
-                sort_stats_and_populate_keys(Data.editors_stats, Args.minimum_labeling_percentage)
+                Data.sort_stats_and_populate_keys(Data.editors_stats, Args.minimum_labeling_percentage)
             if "o" in (Args.graphs + Args.totals).lower():
                 Data.populate_stats(data, Args.start_date, Args.end_date, Data.operating_systems_stats, Args.searched_stats, Args.ignored_stats)
-                sort_stats_and_populate_keys(Data.operating_systems_stats, Args.minimum_labeling_percentage)
+                Data.sort_stats_and_populate_keys(Data.operating_systems_stats, Args.minimum_labeling_percentage)
 
             # User wants to show daily stats
             if Args.graphs != "" or (Args.graphs == "" and Args.totals == ""):

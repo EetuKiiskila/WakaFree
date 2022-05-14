@@ -1,8 +1,11 @@
 import os.path
+import datetime
 
 import yaml
 import plotly.graph_objects as go
 import plotly.express as px
+
+import Data
 
 
 project_directory: str = os.path.dirname(__file__)
@@ -11,35 +14,38 @@ colors_file_path_editors: str = os.path.join(project_directory, "Colors/editors_
 colors_file_path_operating_systems: str = os.path.join(project_directory, "Colors/operating_systems_colors.yml")
 
 
-def draw_graphs(days, keys, datasets, data_type):
-    colors_file_path = None
+def draw_graphs(dates: list[datetime.date], stats: Data.Stats) -> None:
+    """Draw graphs for daily stats.
 
-    match data_type:
+    :param dates: Dates.
+    :param stats: Stats.
+    """
+    match stats.type_:
         case "languages":
             colors_file_path = colors_file_path_languages
         case "editors":
             colors_file_path = colors_file_path_editors
         case "operating_systems":
             colors_file_path = colors_file_path_operating_systems
+        case _:
+            colors_file_path = None
 
     with open(colors_file_path, "r") as colors_file:
         colors_data = yaml.safe_load(colors_file)
 
         fig = go.Figure()
 
-        for key in keys:
+        for key in stats.keys:
             try:
-                fig.add_trace(go.Scatter(x=days,
-                                         y=datasets[key],
-                                         mode="lines",
-                                         name=key,
-                                         marker=dict(color=colors_data[key]["color"])))
-            except Exception:
-                fig.add_trace(go.Scatter(x=days,
-                                         y=datasets[key],
-                                         mode="lines",
-                                         name=key,
-                                         marker=dict(color=colors_data["Other"]["color"])))
+                color = colors_data[key]["color"]
+            except KeyError:
+                color = colors_data["Other"]["color"]
+
+            fig.add_trace(go.Scatter(x=dates,
+                                     y=stats.daily_stats[key],
+                                     mode="lines",
+                                     name=key,
+                                     marker=dict(color=color)))
 
     fig.update_layout(yaxis_title="t (h)", plot_bgcolor="white")
     fig.update_xaxes(showline=True, linewidth=1, linecolor="black", mirror=True)

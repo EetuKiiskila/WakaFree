@@ -1,29 +1,10 @@
 import json
-import datetime
 
 import numpy as np
 
 import Args
 import Data
 import Plotting
-
-
-def seconds_to_hours(seconds):
-    """Convert seconds to hours
-
-    :param seconds: Time in seconds.
-    :return: Time in hours.
-    """
-    return seconds / 3600
-
-
-def string_to_date(date_string):
-    """Convert a string to a datetime date.
-
-    :param date_string: Date string in format YYYY-MM-DD.
-    :return: Date as a datetime date.
-    """
-    return datetime.datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
 
 
 def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
@@ -128,7 +109,7 @@ def populate_stats(wakatime_json, start_date, end_date, stats, searched_stats, i
 
                 # Add label's stats for the day converted to hours
                 stats.daily_stats[label["name"]]\
-                    .append(seconds_to_hours(label["total_seconds"]))
+                    .append(Data.seconds_to_hours(label["total_seconds"]))
 
         # Loop through labels
         for label in stats.daily_stats:
@@ -230,7 +211,7 @@ def main():
 
             # Covert strings to dates
             for index, date in enumerate(dates):
-                dates[index] = string_to_date(date)
+                dates[index] = Data.string_to_date(date)
 
             # Read and sort data
             if "l" in (Args.graphs + Args.totals).lower():

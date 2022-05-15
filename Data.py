@@ -21,13 +21,9 @@ class Stats:
 
     :ivar type_: The type of the object.
     :ivar daily_stats: Container for daily stats.
-    :ivar keys: Container for labels.
-    :ivar total_times: Container for total times.
     """
     type_: StatsType = StatsType.UNKNOWN
     daily_stats: dict = dataclasses.field(default_factory=dict)
-    keys: list = dataclasses.field(default_factory=list)
-    total_times: list = dataclasses.field(default_factory=list)
 
 
 dates: list = []

@@ -158,35 +158,30 @@ def unify_stats(stats, minimum_labeling_percentage):
     :param stats: Object of type stats.
     :param minimum_labeling_percentage: Anything less than this percentage will be moved under the label Other.
     """
-    removed_at_indexes = []
+    grand_total_time = sum([sum(hours) for hours in stats.daily_stats.values()])
+    removed_labels = []
 
     # Add label other if not already present
-    if "Other" not in stats.keys:
-        stats.keys.append("Other")
-        stats.total_times.append(0.0)
-        stats.daily_stats["Other"] = [0.0 for value in stats.daily_stats[stats.keys[0]]]
+    stats.daily_stats.setdefault("Other", [0.0 for date in dates])
 
     # Move stats with low percentage under the label Other
-    for index, total_time in enumerate(stats.total_times):
-        if stats.keys[index] == "Other":
+    for key in stats.daily_stats.keys():
+        if key == "Other":
             continue
-        elif total_time / sum(stats.total_times) * 100.0 < minimum_labeling_percentage:
-            stats.daily_stats["Other"] = np.add(stats.daily_stats["Other"], stats.daily_stats[stats.keys[index]]).tolist()
-            stats.total_times[stats.keys.index("Other")] += stats.total_times[index]
-            removed_at_indexes.append(index)
+
+        total_time = sum(stats.daily_stats[key])
+        if total_time / grand_total_time * 100.0 < minimum_labeling_percentage:
+            stats.daily_stats["Other"] = np.add(stats.daily_stats["Other"], stats.daily_stats[key]).tolist()
+            removed_labels.append(key)
 
     # Remove the label Other if it is not used
-    if len(removed_at_indexes) == 0:
-        del(stats.total_times[stats.keys.index("Other")])
+    if len(removed_labels) == 0:
         del(stats.daily_stats["Other"])
-        stats.keys.remove("Other")
         return
 
     # Remove duplicate stats of labels moved to Other
-    for index in reversed(removed_at_indexes):
-        del(stats.daily_stats[stats.keys[index]])
-        del(stats.keys[index])
-        del(stats.total_times[index])
+    for label in removed_labels:
+        del(stats.daily_stats[label])
 
 
 def sort_stats_and_populate_keys(stats):

@@ -35,7 +35,7 @@ def draw_graphs(dates: list[datetime.date], stats: Data.Stats) -> None:
 
         fig = go.Figure()
 
-        for key in stats.keys:
+        for key in stats.daily_stats.keys():
             try:
                 color = colors_data[key]["color"]
             except KeyError:

@@ -90,21 +90,14 @@ def execute_command() -> None:
             user_data = json.load(file)
 
             # Read dates and labels
-            Data.fetch_dates_and_labels(user_data)
-
-            # Convert strings to dates
-            for index, date in enumerate(Data.dates):
-                Data.dates[index] = Data.string_to_date(date)
+            Data.read_stats(file_name)
 
             # Read and sort data
             if "l" in (graphs + totals).lower():
-                Data.populate_stats(user_data, Data.languages_stats)
                 Data.sort_stats_and_populate_keys(Data.languages_stats)
             if "e" in (graphs + totals).lower():
-                Data.populate_stats(user_data, Data.editors_stats)
                 Data.sort_stats_and_populate_keys(Data.editors_stats)
             if "o" in (graphs + totals).lower():
-                Data.populate_stats(user_data, Data.operating_systems_stats)
                 Data.sort_stats_and_populate_keys(Data.operating_systems_stats)
 
             # Daily stats

@@ -6,6 +6,7 @@ import json
 import numpy as np
 
 import Args
+import Data
 
 
 class StatsType(enum.Enum):
@@ -54,6 +55,52 @@ def string_to_date(date_string):
     return datetime.date(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10]))
 
 
+def fetch_keys(date: dict):
+    """Get keys for stats.
+
+    :param date: Date.
+    """
+
+    # Languages
+    for language in date["languages"]:
+        if "l" not in (Args.graphs + Args.totals).lower():
+            break
+        if len(Args.searched_stats) == 0:
+            if language["name"] in Args.ignored_stats:
+                continue
+            languages_stats.daily_stats.setdefault(language["name"], [])
+        else:
+            if language["name"] not in Args.searched_stats:
+                continue
+            languages_stats.daily_stats.setdefault(language["name"], [])
+
+    # Editors
+    for editor in date["editors"]:
+        if "e" not in (Args.graphs + Args.totals).lower():
+            break
+        if len(Args.searched_stats) == 0:
+            if editor["name"] in Args.ignored_stats:
+                continue
+            editors_stats.daily_stats.setdefault(editor["name"], [])
+        else:
+            if editor["name"] not in Args.searched_stats:
+                continue
+            editors_stats.daily_stats.setdefault(editor["name"], [])
+
+    # Operating systems
+    for operating_system in date["operating_systems"]:
+        if "o" not in (Args.graphs + Args.totals).lower():
+            break
+        if len(Args.searched_stats) == 0:
+            if operating_system["name"] in Args.ignored_stats:
+                continue
+            operating_systems_stats.daily_stats.setdefault(operating_system["name"], [])
+        else:
+            if operating_system["name"] not in Args.searched_stats:
+                continue
+            operating_systems_stats.daily_stats.setdefault(operating_system["name"], [])
+
+
 def read_stats(file_path: str) -> None:
     # Open file
     with open(file_path, "r") as file:
@@ -68,32 +115,8 @@ def read_stats(file_path: str) -> None:
             # Add date to list
             dates.append(string_to_date(date["date"]))
 
-            # Add language labels to list
-            if "l" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(date, languages_stats, Args.searched_stats, Args.ignored_stats)
-
-            # Add editor labels to list
-            if "e" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(date, editors_stats, Args.searched_stats, Args.ignored_stats)
-
-            # Add operating system labels to list
-            if "o" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(date, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
-
-
-def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
-    if stats is not None:
-        for label in day[stats.type_.name.lower()]:
-            if label["name"] in stats.daily_stats:
-                continue
-            if len(searched_stats) == 0:
-                if label["name"] in ignored_stats:
-                    continue
-                stats.daily_stats[label["name"]] = []
-            else:
-                if label["name"] not in searched_stats:
-                    continue
-                stats.daily_stats[label["name"]] = []
+            # Fetch keys for stats
+            fetch_keys(date)
 
 
 def populate_stats(wakatime_json, stats):

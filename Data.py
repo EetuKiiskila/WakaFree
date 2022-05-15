@@ -189,24 +189,10 @@ def sort_stats_and_populate_keys(stats):
 
     :param stats: Object of type Stats.
     """
-    total_hours = 0
-
-    # Loop through labels
-    for label in stats.daily_stats:
-        # Total times for each label
-        hours = sum(stats.daily_stats[label])
-
-        # Add to total time of all labels
-        total_hours += hours
-
-        # Add to total times and keys of the label
-        stats.total_times.append(hours)
-        stats.keys.append(label)
 
     # Unify stats according to user input
     if Args.minimum_labeling_percentage != 0.0:
         unify_stats(stats, Args.minimum_labeling_percentage)
 
     # Reorder from most used to least used
-    stats.total_times, stats.keys = zip(*sorted(zip(stats.total_times, stats.keys), reverse=True))
     stats.daily_stats = dict(sorted(stats.daily_stats.items(), key=lambda pair: sum(pair[1]), reverse=True))

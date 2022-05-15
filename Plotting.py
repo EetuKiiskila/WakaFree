@@ -78,11 +78,11 @@ def draw_pie_chart(stats: Data.Stats) -> None:
         colors_data = yaml.safe_load(colors_file)
 
         # Loop keys
-        for index, key in enumerate(stats.keys):
+        for key in stats.daily_stats.keys():
+            # Get total time for current key
+            hours = sum(stats.daily_stats[key])
 
-            hours = stats.total_times[index]
-
-            # Add time to total time
+            # Add time to total time of all keys
             total_hours += hours
 
             # Add label to list
@@ -93,10 +93,13 @@ def draw_pie_chart(stats: Data.Stats) -> None:
                 colors.append(colors_data["Other"]["color"])
 
     # Add percent sign to legends
-    for index, time in enumerate(stats.total_times):
-        labels[index] += " ({0:.2f} %)".format(stats.total_times[index] / total_hours * 100)
+    for index, key in enumerate(stats.daily_stats.keys()):
+        hours = sum(stats.daily_stats[key])
+        labels[index] += " ({0:.2f} %)".format(hours / total_hours * 100)
 
-    fig = px.pie(names=labels, values=stats.total_times, color_discrete_sequence=colors)
+    fig = px.pie(names=labels,
+                 values=[sum(hours) for hours in stats.daily_stats.values()],
+                 color_discrete_sequence=colors)
     fig.update_traces(marker=dict(line=dict(color="black", width=0.5)), textinfo="none", hovertemplate=labels)
 
     fig.show()

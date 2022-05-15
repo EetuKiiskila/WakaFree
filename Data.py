@@ -1,29 +1,37 @@
 import dataclasses
+import enum
 import datetime
 import numpy as np
 
 import Args
 
 
+class StatsType(enum.Enum):
+    LANGUAGES = enum.auto()
+    EDITORS = enum.auto()
+    OPERATING_SYSTEMS = enum.auto()
+    UNKNOWN = enum.auto()
+
+
 @dataclasses.dataclass
 class Stats:
     """Data class that can store statistics read from a WakaTime JSON file.
 
-    :ivar type_: The type of the object. Possible values: "languages", "editors", "operating_systems".
-    :ivar daily_stats: Container for daily stats. Should be initialized as an empty dict.
-    :ivar keys: Container for labels. Should be initialized as an empty list.
-    :ivar total_times: Container for total times. Should be initialized as an empty list.
+    :ivar type_: The type of the object.
+    :ivar daily_stats: Container for daily stats.
+    :ivar keys: Container for labels.
+    :ivar total_times: Container for total times.
     """
-    type_: str = ""
+    type_: StatsType = StatsType.UNKNOWN
     daily_stats: dict = dataclasses.field(default_factory=dict)
     keys: list = dataclasses.field(default_factory=list)
     total_times: list = dataclasses.field(default_factory=list)
 
 
 dates: list = []
-languages_stats: Stats = Stats("languages")
-editors_stats: Stats = Stats("editors")
-operating_systems_stats: Stats = Stats("operating_systems")
+languages_stats: Stats = Stats(StatsType.LANGUAGES)
+editors_stats: Stats = Stats(StatsType.EDITORS)
+operating_systems_stats: Stats = Stats(StatsType.OPERATING_SYSTEMS)
 
 
 def seconds_to_hours(seconds):
@@ -46,7 +54,7 @@ def string_to_date(date_string):
 
 def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
     if stats is not None:
-        for label in day[stats.type_]:
+        for label in day[stats.type_.name.lower()]:
             if label["name"] in stats.daily_stats:
                 continue
             if len(searched_stats) == 0:
@@ -107,7 +115,7 @@ def populate_stats(wakatime_json, stats):
         number_of_days += 1
 
         # No stats of specified type for the day
-        if len(day[stats.type_]) == 0:
+        if len(day[stats.type_.name.lower()]) == 0:
             # Add 0 hours to all labels for the day
             for label in stats.daily_stats:
                 stats.daily_stats[label].append(0.0)
@@ -115,7 +123,7 @@ def populate_stats(wakatime_json, stats):
         # Stats of specified type exist for the day
         else:
             # Loop through labels
-            for label in day[stats.type_]:
+            for label in day[stats.type_.name.lower()]:
                 # Skip the label depending on user input
                 if len(Args.searched_stats) == 0:
                     if label["name"] in Args.ignored_stats:

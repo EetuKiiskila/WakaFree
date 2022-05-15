@@ -21,11 +21,11 @@ def draw_graphs(dates: list[datetime.date], stats: Data.Stats) -> None:
     :param stats: Stats.
     """
     match stats.type_:
-        case "languages":
+        case Data.StatsType.LANGUAGES:
             colors_file_path = colors_file_path_languages
-        case "editors":
+        case Data.StatsType.EDITORS:
             colors_file_path = colors_file_path_editors
-        case "operating_systems":
+        case Data.StatsType.OPERATING_SYSTEMS:
             colors_file_path = colors_file_path_operating_systems
         case _:
             colors_file_path = None
@@ -60,11 +60,11 @@ def draw_pie_chart(stats: Data.Stats) -> None:
     :param stats: Stats.
     """
     match stats.type_:
-        case "languages":
+        case Data.StatsType.LANGUAGES:
             colors_file_path = colors_file_path_languages
-        case "editors":
+        case Data.StatsType.EDITORS:
             colors_file_path = colors_file_path_editors
-        case "operating_systems":
+        case Data.StatsType.OPERATING_SYSTEMS:
             colors_file_path = colors_file_path_operating_systems
         case _:
             colors_file_path = None

@@ -1,11 +1,11 @@
-from dataclasses import dataclass
+import dataclasses
 import datetime
 import numpy as np
 
 import Args
 
 
-@dataclass
+@dataclasses.dataclass
 class Stats:
     """Data class that can store statistics read from a WakaTime JSON file.
 
@@ -14,16 +14,16 @@ class Stats:
     :ivar keys: Container for labels. Should be initialized as an empty list.
     :ivar total_times: Container for total times. Should be initialized as an empty list.
     """
-    type_: str
-    daily_stats: dict
-    keys: list
-    total_times: list
+    type_: str = ""
+    daily_stats: dict = dataclasses.field(default_factory=dict)
+    keys: list = dataclasses.field(default_factory=list)
+    total_times: list = dataclasses.field(default_factory=list)
 
 
 dates: list = []
-languages_stats: Stats = Stats("languages", {}, [], [])
-editors_stats: Stats = Stats("editors", {}, [], [])
-operating_systems_stats: Stats = Stats("operating_systems", {}, [], [])
+languages_stats: Stats = Stats("languages")
+editors_stats: Stats = Stats("editors")
+operating_systems_stats: Stats = Stats("operating_systems")
 
 
 def seconds_to_hours(seconds):

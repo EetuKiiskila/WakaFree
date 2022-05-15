@@ -214,3 +214,4 @@ def sort_stats_and_populate_keys(stats):
 
     # Reorder from most used to least used
     stats.total_times, stats.keys = zip(*sorted(zip(stats.total_times, stats.keys), reverse=True))
+    stats.daily_stats = dict(sorted(stats.daily_stats.items(), key=lambda pair: sum(pair[1]), reverse=True))

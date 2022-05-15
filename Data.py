@@ -125,9 +125,6 @@ def populate_stats(wakatime_json, stats):
     :param stats: Object of type Stats.
     """
 
-    # How many days have been processed
-    number_of_days = 0
-
     # Loop through all days
     for day in wakatime_json["days"]:
         # Skip day depending on start and end dates
@@ -136,36 +133,22 @@ def populate_stats(wakatime_json, stats):
         elif day["date"] > str(Args.end_date):
             continue
 
-        # Increment how many days have been processed
-        number_of_days += 1
+        # Loop labels and append stats
+        for label in stats.daily_stats.keys():
+            if len(Args.searched_stats) == 0:
+                if label in Args.ignored_stats:
+                    continue
+            else:
+                if label not in Args.searched_stats:
+                    continue
 
-        # No stats of specified type for the day
-        if len(day[stats.type_.name.lower()]) == 0:
-            # Add 0 hours to all labels for the day
-            for label in stats.daily_stats:
-                stats.daily_stats[label].append(0.0)
+            # Stats for the type
+            stats_of_the_day = day[stats.type_.name.lower()]
 
-        # Stats of specified type exist for the day
-        else:
-            # Loop through labels
-            for label in day[stats.type_.name.lower()]:
-                # Skip the label depending on user input
-                if len(Args.searched_stats) == 0:
-                    if label["name"] in Args.ignored_stats:
-                        continue
-                else:
-                    if label["name"] not in Args.searched_stats:
-                        continue
-
-                # Add label's stats for the day converted to hours
-                stats.daily_stats[label["name"]]\
-                    .append(seconds_to_hours(label["total_seconds"]))
-
-        # Loop through labels
-        for label in stats.daily_stats:
-            # If the label has no stats for the day add 0 hours
-            if len(stats.daily_stats[label]) < number_of_days:
-                stats.daily_stats[label].append(0.0)
+            # Add stats to label
+            stats.daily_stats[label].append(seconds_to_hours(
+                next((stat["total_seconds"] for stat in stats_of_the_day if stat["name"] == label), 0.0)
+            ))
 
 
 def unify_stats(stats, minimum_labeling_percentage):

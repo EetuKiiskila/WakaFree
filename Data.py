@@ -1,6 +1,8 @@
 import dataclasses
 import enum
 import datetime
+import json
+
 import numpy as np
 
 import Args
@@ -52,6 +54,33 @@ def string_to_date(date_string):
     return datetime.datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
 
 
+def read_stats(file_path: str) -> None:
+    # Open file
+    with open(file_path, "r") as file:
+        stats = json.load(file)
+
+        # Loop dates
+        for date in stats["days"]:
+            # Skip day if not in given range
+            if date["date"] < str(Args.start_date) or date["date"] > str(Args.end_date):
+                continue
+
+            # Add date to list
+            dates.append(string_to_date(date["date"]))
+
+            # Add language labels to list
+            if "l" in (Args.graphs + Args.totals).lower():
+                fetch_labels_of_a_day(date, languages_stats, Args.searched_stats, Args.ignored_stats)
+
+            # Add editor labels to list
+            if "e" in (Args.graphs + Args.totals).lower():
+                fetch_labels_of_a_day(date, editors_stats, Args.searched_stats, Args.ignored_stats)
+
+            # Add operating system labels to list
+            if "o" in (Args.graphs + Args.totals).lower():
+                fetch_labels_of_a_day(date, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
+
+
 def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
     if stats is not None:
         for label in day[stats.type_.name.lower()]:
@@ -65,32 +94,6 @@ def fetch_labels_of_a_day(day, stats, searched_stats, ignored_stats):
                 if label["name"] not in searched_stats:
                     continue
                 stats.daily_stats[label["name"]] = []
-
-
-def fetch_dates_and_labels(wakatime_json):
-    """Read dates in given file.
-
-    :param wakatime_json: Stats from WakaTime.
-    """
-    for day in wakatime_json["days"]:
-        # Skip day if not in given range
-        if day["date"] < str(Args.start_date) or day["date"] > str(Args.end_date):
-            continue
-        else:
-            # Add date to the list of dates
-            dates.append(day["date"])
-
-            # Add language labels to the list of languages
-            if "l" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(day, languages_stats, Args.searched_stats, Args.ignored_stats)
-
-            # Add editor labels to the list of editors
-            if "e" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(day, editors_stats, Args.searched_stats, Args.ignored_stats)
-
-            # Add operating system labels to the list of operating systems
-            if "o" in (Args.graphs + Args.totals).lower():
-                fetch_labels_of_a_day(day, operating_systems_stats, Args.searched_stats, Args.ignored_stats)
 
 
 def populate_stats(wakatime_json, stats):

@@ -90,11 +90,7 @@ def execute_command() -> None:
             user_data = json.load(file)
 
             # Read dates and labels
-            Data.fetch_dates_and_labels(user_data)
-
-            # Convert strings to dates
-            for index, date in enumerate(Data.dates):
-                Data.dates[index] = Data.string_to_date(date)
+            Data.read_stats(file_name)
 
             # Read and sort data
             if "l" in (graphs + totals).lower():

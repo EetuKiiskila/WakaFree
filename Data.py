@@ -51,7 +51,7 @@ def string_to_date(date_string):
     :param date_string: Date string in format YYYY-MM-DD.
     :return: Date as a datetime date.
     """
-    return datetime.datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10])).date()
+    return datetime.date(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10]))
 
 
 def read_stats(file_path: str) -> None:

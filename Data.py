@@ -135,13 +135,6 @@ def populate_stats(wakatime_json, stats):
 
         # Loop labels and append stats
         for label in stats.daily_stats.keys():
-            if len(Args.searched_stats) == 0:
-                if label in Args.ignored_stats:
-                    continue
-            else:
-                if label not in Args.searched_stats:
-                    continue
-
             # Stats for the type
             stats_of_the_day = day[stats.type_.name.lower()]
 

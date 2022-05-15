@@ -94,13 +94,10 @@ def execute_command() -> None:
 
             # Read and sort data
             if "l" in (graphs + totals).lower():
-                Data.populate_stats(user_data, Data.languages_stats)
                 Data.sort_stats_and_populate_keys(Data.languages_stats)
             if "e" in (graphs + totals).lower():
-                Data.populate_stats(user_data, Data.editors_stats)
                 Data.sort_stats_and_populate_keys(Data.editors_stats)
             if "o" in (graphs + totals).lower():
-                Data.populate_stats(user_data, Data.operating_systems_stats)
                 Data.sort_stats_and_populate_keys(Data.operating_systems_stats)
 
             # Daily stats

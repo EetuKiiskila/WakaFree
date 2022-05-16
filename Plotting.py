@@ -5,6 +5,7 @@ import yaml
 import plotly.graph_objects as go
 import plotly.express as px
 
+import Args
 import Data
 
 
@@ -103,3 +104,31 @@ def draw_pie_chart(stats: Data.Stats) -> None:
     fig.update_traces(marker=dict(line=dict(color="black", width=0.5)), textinfo="none", hovertemplate=labels)
 
     fig.show()
+
+
+def plot() -> None:
+    """Plot data."""
+
+    # Daily stats
+    if Args.graphs != "" or (Args.graphs == "" and Args.totals == ""):
+        # Languages
+        if "l" in Args.graphs.lower():
+            draw_graphs(Data.dates, Data.languages_stats)
+        # Editors
+        if "e" in Args.graphs.lower():
+            draw_graphs(Data.dates, Data.editors_stats)
+        # Operating systems
+        if "o" in Args.graphs.lower():
+            draw_graphs(Data.dates, Data.operating_systems_stats)
+
+    # Total times
+    if Args.totals != "" or (Args.graphs == "" and Args.totals == ""):
+        # Languages
+        if "l" in Args.totals.lower():
+            draw_pie_chart(Data.languages_stats)
+        # Editors
+        if "e" in Args.totals.lower():
+            draw_pie_chart(Data.editors_stats)
+        # Operating systems
+        if "o" in Args.totals.lower():
+            draw_pie_chart(Data.operating_systems_stats)

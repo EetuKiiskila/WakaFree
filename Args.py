@@ -86,32 +86,12 @@ def execute_command() -> None:
 
     # User specified a file
     if file_name != "":
+
         # Read and process stats
         Data.read_stats(file_name)
 
-        # Daily stats
-        if graphs != "" or (graphs == "" and totals == ""):
-            # Languages
-            if "l" in graphs.lower():
-                Plotting.draw_graphs(Data.dates, Data.languages_stats)
-            # Editors
-            if "e" in graphs.lower():
-                Plotting.draw_graphs(Data.dates, Data.editors_stats)
-            # Operating systems
-            if "o" in graphs.lower():
-                Plotting.draw_graphs(Data.dates, Data.operating_systems_stats)
-
-        # Total times
-        if totals != "" or (graphs == "" and totals == ""):
-            # Languages
-            if "l" in totals.lower():
-                Plotting.draw_pie_chart(Data.languages_stats)
-            # Editors
-            if "e" in totals.lower():
-                Plotting.draw_pie_chart(Data.editors_stats)
-            # Operating systems
-            if "o" in totals.lower():
-                Plotting.draw_pie_chart(Data.operating_systems_stats)
+        # Plot data
+        Plotting.plot()
 
     # User did not give a file or an optional argument
     else:

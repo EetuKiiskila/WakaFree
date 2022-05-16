@@ -96,6 +96,32 @@ def fetch_keys(day: dict) -> None:
             operating_systems_stats.daily_stats.setdefault(operating_system["name"], [])
 
 
+def populate_stats(stats_source: dict, stats_destination: Stats) -> None:
+    """Read daily stats.
+
+    :param stats_source: Data read from WakaTime JSON file.
+    :param stats_destination: Object to store stats in.
+    """
+
+    # Loop through all days
+    for day in stats_source["days"]:
+        # Skip day depending on start and end dates
+        if day["date"] < str(Args.start_date):
+            continue
+        elif day["date"] > str(Args.end_date):
+            continue
+
+        # Loop labels and append stats
+        for label in stats_destination.daily_stats.keys():
+            # Stats for the type
+            stats_of_the_day = day[stats_destination.type_.name.lower()]
+
+            # Add stats for label to current date
+            stats_destination.daily_stats[label].append(seconds_to_hours(
+                next((stat["total_seconds"] for stat in stats_of_the_day if stat["name"] == label), 0.0)
+            ))
+
+
 def read_stats(file_path: str) -> None:
     # Open file
     with open(file_path, "r") as file:
@@ -120,32 +146,6 @@ def read_stats(file_path: str) -> None:
             populate_stats(stats, editors_stats)
         if "o" in (Args.graphs + Args.totals):
             populate_stats(stats, operating_systems_stats)
-
-
-def populate_stats(wakatime_json, stats):
-    """Read daily stats in given file for operating systems.
-
-    :param wakatime_json: Stats from WakaTime.
-    :param stats: Object of type Stats.
-    """
-
-    # Loop through all days
-    for day in wakatime_json["days"]:
-        # Skip day depending on start and end dates
-        if day["date"] < str(Args.start_date):
-            continue
-        elif day["date"] > str(Args.end_date):
-            continue
-
-        # Loop labels and append stats
-        for label in stats.daily_stats.keys():
-            # Stats for the type
-            stats_of_the_day = day[stats.type_.name.lower()]
-
-            # Add stats to label
-            stats.daily_stats[label].append(seconds_to_hours(
-                next((stat["total_seconds"] for stat in stats_of_the_day if stat["name"] == label), 0.0)
-            ))
 
 
 def unify_stats(stats, minimum_labeling_percentage):

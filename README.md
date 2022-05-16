@@ -1,4 +1,4 @@
-# WakaFree (v. 2.7.5)
+# WakaFree (v. 2.7.6)
 
 [English](#english)
 
@@ -42,7 +42,7 @@ The arguments in the square brackets are optional. The arguments are explained b
 - -m / --minimum-labeling-percentage: Inclusive lower limit for labeling the stats. Everything under this percentage will be moved to the group *Other*. If this argument is not passed then the stats will all have their own labels. Some of the stats collected by WakaTime might be labeled as *Other* so it is possible to see a group with that name even without this argument. Use a percentage without percent sign.
 - --start-date: Shows all dates starting from the given date. Use a string in format "YYYY-MM-DD". Inclusive. Dates are not prepended to the stats if the given date is before the first date in the stats.
 - --end-date: Shows all dates ending in the given date. Use a string in format "YYYY-MM-DD". Inclusive. Dates are not appended to the stats if the given date is after the last date in the stats.
-- FILE: The path for the file that contains the statistics from WakaTime. Can be downloaded from WakaTime by going to Settings &#8594; Personal settings &#8594; Account &#8594; Export.
+- FILE: The path for the file that contains the statistics from WakaTime. Can be downloaded from WakaTime by going to Settings &#8594; Personal settings &#8594; Account &#8594; Export &#8594; Export my coding activity... &#8594; Daily totals.
 
 If neither of the optional arguments for drawing the charts is given with FILE, then everything will be drawn.
 
@@ -102,7 +102,7 @@ Hakasulkeissa olevat argumentit eivät ole pakollisia. Argumentit on selitetty a
 - -m / --minimum-labeling-percentage: Alaraja, jolla tiedot luokitellaan omalla otsikollaan. Tiedot, joiden osuus on alle annetun prosenttiluvun, yhdistetään otsikon *Other* alle. Jos tätä argumenttia ei käytetä, kaikki tiedot luokitellaan oman otsikonsa mukaisesti. Osalla WakaTimen keräämistä tiedoista voi olla otsikko *Other*, joten on mahdollista nähdä kyseinen otsikko myös ilman tätä argumenttia. Käytä prosenttilukua ilman prosenttimerkkiä.
 - --start-date: Näyttää tiedot annetusta päivästä alkaen. Käytä muodossa "VVVV-KK-PP" olevaa merkkijonoa. Päivämäärä kuuluu piirrettävään väliin. Tyhjiä päiviä ei lisätä tilastojen alkuun, jos annettu päivämäärä on ennen tilastojen ensimmäistä päivää.
 - --end-date: Näyttää tiedot annettuun päivään asti. Käytä muodossa "VVVV-KK-PP" olevaa merkkijonoa. Päivämäärä kuuluu piirrettävään väliin. Tyhjiä päiviä ei lisätä tilastojen loppuun, jos annettu päivämäärä on tilastojen viimeisen päivän jälkeen.
-- FILE: Polku tiedostoon, joka sisältää WakaTimen tilastot. Voidaan ladata WakaTimesta kohdasta Settings &#8594; Personal settings &#8594; Account &#8594; Export.
+- FILE: Polku tiedostoon, joka sisältää WakaTimen tilastot. Voidaan ladata WakaTimesta kohdasta Settings &#8594; Personal settings &#8594; Account &#8594; Export &#8594; Export my coding activity... &#8594; Daily totals.
 
 Jos kumpaakaan valinnaista argumenttia kaavioiden piirtämiseen ei anneta FILE:n kanssa, piirretään kaikki kuvaajat.
 

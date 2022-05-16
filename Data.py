@@ -157,6 +157,14 @@ def unify_stats(stats: Stats, minimum_labeling_percentage: float) -> None:
         del(stats.daily_stats[label])
 
 
+def sort_stats(stats: Stats) -> None:
+    """Sort stats from most commonly used to least commonly used.
+
+    :param stats: Object containing stats.
+    """
+    stats.daily_stats = dict(sorted(stats.daily_stats.items(), key=lambda pair: sum(pair[1]), reverse=True))
+
+
 def read_stats(file_path: str) -> None:
     # Open file
     with open(file_path, "r") as file:
@@ -184,11 +192,3 @@ def read_stats(file_path: str) -> None:
         if "o" in (Args.graphs + Args.totals):
             populate_stats(stats, operating_systems_stats)
             unify_stats(operating_systems_stats, Args.minimum_labeling_percentage)
-
-
-def sort_stats(stats: Stats) -> None:
-    """Sort stats from most commonly used to least commonly used.
-
-    :param stats: Object containing stats.
-    """
-    stats.daily_stats = dict(sorted(stats.daily_stats.items(), key=lambda pair: sum(pair[1]), reverse=True))

@@ -17,22 +17,22 @@ class StatsType(enum.Enum):
 
 @dataclasses.dataclass
 class Stats:
-    """Data class that can store statistics read from a WakaTime JSON file.
+    """Data class for storing statistics.
 
-    :ivar type_: The type of the object.
-    :ivar daily_stats: Container for daily stats.
+    :ivar type_: Type of the data. Languages, editors or operating systems.
+    :ivar daily_stats: Daily stats. Keys are names such as Python, values are lists containing daily hours.
     """
     type_: StatsType = StatsType.UNKNOWN
     daily_stats: dict = dataclasses.field(default_factory=dict)
 
 
-dates: list = []
+dates: list[datetime.date] = []
 languages_stats: Stats = Stats(StatsType.LANGUAGES)
 editors_stats: Stats = Stats(StatsType.EDITORS)
 operating_systems_stats: Stats = Stats(StatsType.OPERATING_SYSTEMS)
 
 
-def seconds_to_hours(seconds):
+def seconds_to_hours(seconds: float) -> float:
     """Convert seconds to hours.
 
     :param seconds: Time in seconds.
@@ -41,7 +41,7 @@ def seconds_to_hours(seconds):
     return seconds / 3600
 
 
-def string_to_date(date_string):
+def string_to_date(date_string: str) -> datetime.date:
     """Convert a string to a datetime date.
 
     :param date_string: Date string in format YYYY-MM-DD.

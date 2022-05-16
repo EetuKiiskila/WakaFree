@@ -122,36 +122,10 @@ def populate_stats(stats_source: dict, stats_destination: Stats) -> None:
             ))
 
 
-def read_stats(file_path: str) -> None:
-    # Open file
-    with open(file_path, "r") as file:
-        stats = json.load(file)
-
-        # Loop dates
-        for date in stats["days"]:
-            # Skip day if not in given range
-            if date["date"] < str(Args.start_date) or date["date"] > str(Args.end_date):
-                continue
-
-            # Add date to list
-            dates.append(string_to_date(date["date"]))
-
-            # Fetch keys for stats
-            fetch_keys(date)
-
-        # Read stats
-        if "l" in (Args.graphs + Args.totals):
-            populate_stats(stats, languages_stats)
-        if "e" in (Args.graphs + Args.totals):
-            populate_stats(stats, editors_stats)
-        if "o" in (Args.graphs + Args.totals):
-            populate_stats(stats, operating_systems_stats)
-
-
-def unify_stats(stats, minimum_labeling_percentage):
+def unify_stats(stats: Stats, minimum_labeling_percentage: float) -> None:
     """Group stats under the label Other.
 
-    :param stats: Object of type stats.
+    :param stats: Object containing stats.
     :param minimum_labeling_percentage: Anything less than this percentage will be moved under the label Other.
     """
     grand_total_time = sum([sum(hours) for hours in stats.daily_stats.values()])
@@ -178,6 +152,32 @@ def unify_stats(stats, minimum_labeling_percentage):
     # Remove duplicate stats of labels moved to Other
     for label in removed_labels:
         del(stats.daily_stats[label])
+
+
+def read_stats(file_path: str) -> None:
+    # Open file
+    with open(file_path, "r") as file:
+        stats = json.load(file)
+
+        # Loop dates
+        for date in stats["days"]:
+            # Skip day if not in given range
+            if date["date"] < str(Args.start_date) or date["date"] > str(Args.end_date):
+                continue
+
+            # Add date to list
+            dates.append(string_to_date(date["date"]))
+
+            # Fetch keys for stats
+            fetch_keys(date)
+
+        # Read stats
+        if "l" in (Args.graphs + Args.totals):
+            populate_stats(stats, languages_stats)
+        if "e" in (Args.graphs + Args.totals):
+            populate_stats(stats, editors_stats)
+        if "o" in (Args.graphs + Args.totals):
+            populate_stats(stats, operating_systems_stats)
 
 
 def sort_stats_and_populate_keys(stats):

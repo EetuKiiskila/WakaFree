@@ -128,6 +128,9 @@ def unify_stats(stats: Stats, minimum_labeling_percentage: float) -> None:
     :param stats: Object containing stats.
     :param minimum_labeling_percentage: Anything less than this percentage will be moved under the label Other.
     """
+    if Args.minimum_labeling_percentage == 0.0:
+        return
+
     grand_total_time = sum([sum(hours) for hours in stats.daily_stats.values()])
     removed_labels = []
 
@@ -171,24 +174,21 @@ def read_stats(file_path: str) -> None:
             # Fetch keys for stats
             fetch_keys(date)
 
-        # Read stats
+        # Read stats and group under Other if wanted
         if "l" in (Args.graphs + Args.totals):
             populate_stats(stats, languages_stats)
+            unify_stats(languages_stats, Args.minimum_labeling_percentage)
         if "e" in (Args.graphs + Args.totals):
             populate_stats(stats, editors_stats)
+            unify_stats(editors_stats, Args.minimum_labeling_percentage)
         if "o" in (Args.graphs + Args.totals):
             populate_stats(stats, operating_systems_stats)
+            unify_stats(operating_systems_stats, Args.minimum_labeling_percentage)
 
 
-def sort_stats_and_populate_keys(stats):
-    """Sort the stats from most common to least common.
+def sort_stats(stats: Stats) -> None:
+    """Sort stats from most commonly used to least commonly used.
 
-    :param stats: Object of type Stats.
+    :param stats: Object containing stats.
     """
-
-    # Unify stats according to user input
-    if Args.minimum_labeling_percentage != 0.0:
-        unify_stats(stats, Args.minimum_labeling_percentage)
-
-    # Reorder from most used to least used
     stats.daily_stats = dict(sorted(stats.daily_stats.items(), key=lambda pair: sum(pair[1]), reverse=True))

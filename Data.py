@@ -50,14 +50,14 @@ def string_to_date(date_string: str) -> datetime.date:
     return datetime.date(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10]))
 
 
-def fetch_keys(date: dict):
+def fetch_keys(day: dict) -> None:
     """Get keys for stats.
 
-    :param date: Date.
+    :param day: Day from WakaTime JSON file.
     """
 
     # Languages
-    for language in date["languages"]:
+    for language in day["languages"]:
         if "l" not in (Args.graphs + Args.totals).lower():
             break
         if len(Args.searched_stats) == 0:
@@ -70,7 +70,7 @@ def fetch_keys(date: dict):
             languages_stats.daily_stats.setdefault(language["name"], [])
 
     # Editors
-    for editor in date["editors"]:
+    for editor in day["editors"]:
         if "e" not in (Args.graphs + Args.totals).lower():
             break
         if len(Args.searched_stats) == 0:
@@ -83,7 +83,7 @@ def fetch_keys(date: dict):
             editors_stats.daily_stats.setdefault(editor["name"], [])
 
     # Operating systems
-    for operating_system in date["operating_systems"]:
+    for operating_system in day["operating_systems"]:
         if "o" not in (Args.graphs + Args.totals).lower():
             break
         if len(Args.searched_stats) == 0:

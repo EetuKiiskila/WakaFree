@@ -166,6 +166,11 @@ def sort_stats(stats: Stats) -> None:
 
 
 def read_stats(file_path: str) -> None:
+    """Read and process stats.
+
+    :param file_path: WakaTime JSON file path.
+    """
+
     # Open file
     with open(file_path, "r") as file:
         stats = json.load(file)

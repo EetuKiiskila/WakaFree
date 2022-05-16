@@ -10,9 +10,9 @@ import Data
 
 
 project_directory: str = os.path.dirname(__file__)
-colors_file_path_languages: str = os.path.join(project_directory, "Colors/languages_colors.yml")
-colors_file_path_editors: str = os.path.join(project_directory, "Colors/editors_colors.yml")
-colors_file_path_operating_systems: str = os.path.join(project_directory, "Colors/operating_systems_colors.yml")
+colors_file_path_languages: str = os.path.join(project_directory, "Colors/languages_colors.yaml")
+colors_file_path_editors: str = os.path.join(project_directory, "Colors/editors_colors.yaml")
+colors_file_path_operating_systems: str = os.path.join(project_directory, "Colors/operating_systems_colors.yaml")
 
 
 def draw_graphs(dates: list[datetime.date], stats: Data.Stats) -> None:

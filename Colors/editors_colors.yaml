@@ -1,0 +1,142 @@
+# https://wakatime.com/colors/editors
+---
+Adobe XD:
+  color: "#fd27bc"
+Android Studio:
+  color: "#99cd00"
+AppCode:
+  color: "#04dbde"
+Aptana:
+  color: "#ec8623"
+Atom:
+  color: "#49b77e"
+Azure Data Studio:
+  color: "#0271c6"
+Blender:
+  color: "#fb8007"
+Brackets:
+  color: "#067dc3"
+Chrome:
+  color: "#fdd308"
+CLion:
+  color: "#14c9a5"
+Cloud9:
+  color: "#25a6d9"
+Coda:
+  color: "#3e8e1c"
+Code::Blocks:
+  color: "#d0ce71"
+CodeTasty:
+  color: "#7368a8"
+DataGrip:
+  color: "#907cf2"
+DBeaver:
+  color: "#897363"
+Eclipse:
+  color: "#443582"
+Emacs:
+  color: "#8c76c3"
+Embarcadero Delphi:
+  color: "#d9242a"
+EmEditor:
+  color: "#ed3103"
+Eric:
+  color: "#423f13"
+Excel:
+  color: "#0f753c"
+Figma:
+  color: "#c7b9ff"
+Firefox:
+  color: "#d96527"
+Flash Builder:
+  color: "#aca3a4"
+Geany:
+  color: "#fbec75"
+Gedit:
+  color: "#872114"
+GoLand:
+  color: "#bd4ffc"
+HBuilder X:
+  color: "#1ba334"
+IntelliJ IDEA:
+  color: "#237ce2"
+Kakoune:
+  color: "#dd5f4a"
+Kate:
+  color: "#3f4040"
+Komodo:
+  color: "#fcb414"
+Light Table:
+  color: "#007ac1"
+MacRabbit Espresso:
+  color: "#e6593f"
+Micro:
+  color: "#2c3494"
+MonoDevelop:
+  color: "#6185b3"
+MySQL Workbench:
+  color: "#245279"
+NetBeans:
+  color: "#f1f6e2"
+Notepad++:
+  color: "#9ecf54"
+Nova:
+  color: "ff054a"
+Onivim:
+  color: "#ee848e"
+Photoshop:
+  color: "#0a0054"
+PhpStorm:
+  color: "#d93ac1"
+PowerPoint:
+  color: "#c6421f"
+Processing:
+  color: "#6a7152"
+PyCharm:
+  color: "#d2ee5c"
+Pymakr:
+  color: "#323d4f"
+QtCreator:
+  color: "#7fc342"
+Rider:
+  color: "#f7a415"
+RStudio:
+  color: "#2369c7"
+RubyMine:
+  color: "#ff6336"
+Sketch:
+  color: "#fdad00"
+SlickEdit:
+  color: "#57ca57"
+SQL Server Management Studio:
+  color: "#ffb901"
+Sublime Text:
+  color: "#ff9800"
+Terminal:
+  color: "#133f1c"
+TeXstudio:
+  color: "#652d96"
+TextMate:
+  color: "#822b7a"
+Unity:
+  color: "#222d36"
+Vim:
+  color: "#068304"
+Visual Studio:
+  color: "#9460cd"
+VS Code:
+  color: "#027acd"
+WebMatrix:
+  color: "#aeaeae"
+WebStorm:
+  color: "#00c6d7"
+Word:
+  color: "#0f4091"
+WPS Office:
+  color: "#fc6143"
+Xamarin:
+  color: "#3598db"
+Xcode:
+  color: "#3fa7e4"
+Other:
+  color: "#1f9aef"

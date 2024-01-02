@@ -188,15 +188,15 @@ def read_stats(file_path: str) -> None:
             fetch_keys(date)
 
         # Read, group and sort data
-        if "l" in (Args.graphs + Args.totals):
+        if "l" in (Args.graphs + Args.totals).lower():
             populate_stats(stats, languages_stats)
             unify_stats(languages_stats, Args.minimum_labeling_percentage)
             sort_stats(languages_stats)
-        if "e" in (Args.graphs + Args.totals):
+        if "e" in (Args.graphs + Args.totals).lower():
             populate_stats(stats, editors_stats)
             unify_stats(editors_stats, Args.minimum_labeling_percentage)
             sort_stats(editors_stats)
-        if "o" in (Args.graphs + Args.totals):
+        if "o" in (Args.graphs + Args.totals).lower():
             populate_stats(stats, operating_systems_stats)
             unify_stats(operating_systems_stats, Args.minimum_labeling_percentage)
             sort_stats(operating_systems_stats)
